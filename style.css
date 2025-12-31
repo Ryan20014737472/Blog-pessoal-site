@@ -1,31 +1,51 @@
 body {
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  height: 100vh;
   margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 0;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   font-family: Arial, sans-serif;
   color: white;
 }
 
-.card {
-  background: rgba(255, 255, 255, 0.12);
-  padding: 30px;
-  border-radius: 20px;
+header {
   text-align: center;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  max-width: 300px;
+  padding: 40px 20px;
 }
 
-.button {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 12px 20px;
-  background: linear-gradient(45deg, #00c6ff, #0072ff);
-  color: white;
-  text-decoration: none;
-  border-radius: 30px;
-  font-weight: bold;
+header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+header p {
+  opacity: 0.8;
+  margin-top: 10px;
+}
+
+main {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.momento {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 16px;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.momento img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.momento p {
+  font-size: 14px;
+  line-height: 1.5;
 }
