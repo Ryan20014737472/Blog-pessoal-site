@@ -3,12 +3,15 @@ body {
   padding: 0;
   min-height: 100vh;
   background: linear-gradient(
-    135deg,
+    120deg,
     #1a0026,
     #2b0033,
     #4a001f,
-    #6b001a
+    #6b001a,
+    #2b0033
   );
+  background-size: 400% 400%;
+  animation: sangue 25s ease infinite;
   font-family: Arial, sans-serif;
   color: #f1f1f1;
 }
@@ -134,3 +137,15 @@ hr {
     width: 100%;
   }
 }
+
+@keyframes sangue {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+  }
