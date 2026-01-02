@@ -1,4 +1,4 @@
-/* FUNDO + DEGRADÊ */
+/* FUNDO + DEGRADÊ ANIMADO */
 body {
   margin: 0;
   padding: 0;
@@ -29,7 +29,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: url("SEU_GIF_AQUI.gif") center / cover no-repeat;
+  background: url("S0rebqwiri5w61.gif") center / cover no-repeat;
   opacity: 0.06;
   pointer-events: none;
   z-index: -1;
@@ -42,12 +42,15 @@ header {
 }
 
 header h1 {
-  font-size: 40px;
   margin: 0;
+  font-size: 40px;
+  letter-spacing: 2px;
 }
 
 header p {
-  opacity: 0.7;
+  margin-top: 12px;
+  opacity: 0.75;
+  font-size: 14px;
 }
 
 /* MAIN */
@@ -55,28 +58,6 @@ main {
   max-width: 950px;
   margin: auto;
   padding: 20px;
-  position: relative;
-}
-
-/* LINHA DO TEMPO ONDULADA VERDE */
-main::before {
-  content: "";
-  position: absolute;
-  top: 200px;
-  bottom: 200px;
-  left: 50%;
-  width: 6px;
-  transform: translateX(-50%);
-  background: linear-gradient(180deg, #00ff88, #00cc66, #00ff88);
-  box-shadow: 0 0 12px #00ff88, 0 0 25px rgba(0,255,136,.8);
-  border-radius: 50px;
-  animation: ondaTempo 6s ease-in-out infinite;
-}
-
-@keyframes ondaTempo {
-  0% { transform: translateX(-50%) skewY(0deg); }
-  50% { transform: translateX(-50%) skewY(6deg); }
-  100% { transform: translateX(-50%) skewY(0deg); }
 }
 
 /* POSTS */
@@ -84,14 +65,13 @@ main::before {
   display: flex;
   gap: 30px;
   align-items: flex-start;
-  position: relative;
-  z-index: 2;
 }
 
 .post img {
   width: 45%;
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.6);
+  object-fit: cover;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
 
 .texto {
@@ -99,32 +79,35 @@ main::before {
 }
 
 .texto h2 {
-  color: #ff4d6d;
   margin-top: 0;
+  font-size: 24px;
+  color: #ff4d6d;
 }
 
-/* PONTO DA LINHA DO TEMPO */
-.post.timeline::before {
-  content: "";
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  width: 18px;
-  height: 18px;
-  background: #00ff88;
-  border-radius: 50%;
-  transform: translateX(-50%);
-  box-shadow: 0 0 10px #00ff88, 0 0 20px rgba(0,255,136,.9);
+.texto p {
+  line-height: 1.7;
+  font-size: 15px;
+  opacity: 0.95;
 }
 
-/* DIVISÓRIA */
+/* DIVISÓRIA BRILHANTE */
 hr {
   border: none;
   height: 4px;
   width: 100vw;
   margin: 70px 0;
-  background: linear-gradient(90deg, transparent, #ff003c, #ff4d6d, #ff003c, transparent);
-  box-shadow: 0 0 8px #ff003c, 0 0 20px rgba(255,0,60,.8);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #ff003c,
+    #ff4d6d,
+    #ff003c,
+    transparent
+  );
+  box-shadow:
+    0 0 8px #ff003c,
+    0 0 16px #ff003c,
+    0 0 30px rgba(255, 0, 60, 0.7);
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -141,7 +124,7 @@ hr {
     width: 100%;
   }
 
-  main::before {
-    display: none;
+  header h1 {
+    font-size: 32px;
   }
-                              } }
+  }
