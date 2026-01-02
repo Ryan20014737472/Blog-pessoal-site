@@ -29,7 +29,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: url(0rebqwiri5w61.gif") center / cover no-repeat;
+  background: url("0rebqwiri5w61.gif") center / cover no-repeat;
   opacity: 0.06;
   pointer-events: none;
   z-index: -1;
