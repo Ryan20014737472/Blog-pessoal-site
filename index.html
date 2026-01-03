@@ -94,5 +94,41 @@
 
   </main>
 
+<div id="balloon"></div>
+
+<div id="jumpscare">
+  <img src="pennywise.png">
+</div>
+
+<audio id="laugh" src="pennywise-laugh.mp3"></audio>  
+
+<script>
+const balloon = document.getElementById("balloon");
+const jumpscare = document.getElementById("jumpscare");
+const laugh = document.getElementById("laugh");
+
+function spawnBalloon() {
+  balloon.style.display = "block";
+  balloon.style.left = Math.random() * 80 + "vw";
+  balloon.style.bottom = "-120px";
+
+  balloon.animate(
+    [{ transform: "translateY(0)" }, { transform: "translateY(-120vh)" }],
+    { duration: 12000, easing: "linear" }
+  );
+
+  setTimeout(() => balloon.style.display = "none", 12000);
+}
+
+balloon.onclick = () => {
+  balloon.style.display = "none";
+  jumpscare.classList.add("show");
+  laugh.currentTime = 0;
+  laugh.play();
+  setTimeout(() => jumpscare.classList.remove("show"), 1200);
+};
+
+setInterval(spawnBalloon, 20000);
+  </script>
 </body>
           </html>
