@@ -75,7 +75,7 @@ main {
 }
 
 .texto {
-  width: 70%;
+  width: 55%;
 }
 
 .texto h2 {
@@ -86,7 +86,7 @@ main {
 
 .texto p {
   line-height: 1.7;
-  font-size: 30px;
+  font-size: 20px;
   opacity: 0.95;
 }
 
