@@ -172,3 +172,74 @@ hr {
   height: 100%;
   object-fit: cover;
   }
+
+/* ===== GALERIA PIXEL FINAL ===== */
+
+.galeria-pixel {
+  text-align: center;
+  padding: 40px 10px 80px;
+}
+
+.titulo-pixel {
+  font-size: 28px;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+}
+
+/* GRID */
+.pixel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  max-width: 720px;
+  margin: auto;
+}
+
+/* CARD */
+.pixel-card {
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 15px 10px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.pixel-card:hover {
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: 0 0 18px rgba(255,0,80,0.5);
+}
+
+/* IMAGEM PIXEL */
+.pixel-card img {
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+/* NOME */
+.pixel-card span {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* ===== SEU PERSONAGEM CENTRAL ===== */
+
+.pixel-card.principal {
+  grid-column: 2;
+  transform: scale(1.15);
+  box-shadow: 0 0 25px rgba(0,255,120,0.7);
+  background: rgba(0,255,120,0.10);
+}
+
+/* MOBILE */
+@media (max-width: 650px) {
+
+  .pixel-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pixel-card.principal {
+    grid-column: auto;
+    transform: scale(1.05);
+  }
+  }
