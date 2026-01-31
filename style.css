@@ -247,3 +247,24 @@ hr {
     transform: scale(1.05);
   }
   }
+
+/* TÍTULO EM IMAGEM */
+.titulo-img {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  display: block;
+  margin: 0 auto 14px;
+
+  /* brilho equilibrado */
+  filter: drop-shadow(0 0 10px rgba(255, 80, 80, 0.35));
+  }
+
+.titulo-img {
+  animation: flutuarTitulo 6s ease-in-out infinite;
+}
+
+@keyframes flutuarTitulo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  }
