@@ -67,7 +67,8 @@ main {
   align-items: flex-start;
 }
 
-.post img {
+.post img,
+.post video {
   width: 45%;
   border-radius: 14px;
   object-fit: cover;
