@@ -12,7 +12,7 @@ body {
     #2b0033
   );
   background-size: 400% 400%;
-  animation: sangue 25s ease infinite;
+  animation: sangue 10s ease infinite;
   font-family: Arial, sans-serif;
   color: #f1f1f1;
   position: relative;
