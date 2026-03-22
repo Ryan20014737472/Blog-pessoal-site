@@ -269,3 +269,12 @@ hr {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
   }
+
+.play-musica {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.play-musica:hover {
+  transform: scale(1.03);
+}
