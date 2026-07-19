@@ -578,76 +578,9 @@
   </audio>
     </article>
 
-<section class="galeria-pixel">
-  <h2 class="titulo-pixel">🎮 Pixel Squad</h2>
-  <hr>
-
-      
-  <div class="pixel-grid">
-
-    <div class="pixel-card">
-      <img src="pixeld.png">
-      <span>Danilo</span>
-    </div>
-
-
-    <!-- SEU PERSONAGEM (sempre no meio) -->
-    <div class="pixel-card principal">
-      <img src="ryanpixel.png">
-      <span>Batistel</span>
-    </div>
-
-    <div class="pixel-card">
-      <img src="pixel-amigo2.png">
-      <span>Gabs</span>
-    </div>
-
-    <div class="pixel-card">
-      <img src="pixel-amigo3.png">
-      <span>Nádia</span>
-    </div>
-
-  </div>
-</section>
     
   </main>
 
-<div id="balloon"></div>
-
-<div id="jumpscare">
-  <img src="wise.gif">
-</div>
-
-<audio id="laugh" src="penny.mp3"></audio>  
-
-<script>
-const balloon = document.getElementById("balloon");
-const jumpscare = document.getElementById("jumpscare");
-const laugh = document.getElementById("laugh");
-
-function spawnBalloon() {
-  balloon.style.display = "block";
-  balloon.style.left = Math.random() * 80 + "vw";
-  balloon.style.bottom = "-120px";
-
-  balloon.animate(
-    [{ transform: "translateY(0)" }, { transform: "translateY(-120vh)" }],
-    { duration: 12000, easing: "linear" }
-  );
-
-  setTimeout(() => balloon.style.display = "none", 12000);
-}
-
-balloon.onclick = () => {
-  balloon.style.display = "none";
-  jumpscare.classList.add("show");
-  laugh.currentTime = 0;
-  laugh.play();
-  setTimeout(() => jumpscare.classList.remove("show"), 1200);
-};
-
-setInterval(spawnBalloon, 99999);
-  </script>
 
 <script>
 let audioAtual = null;
@@ -679,32 +612,7 @@ document.querySelectorAll('.play-musica').forEach(img => {
 
   </main>
 
-  <!-- AQUI entra o script -->
-  <script>
-  let audioAtual = null;
 
-  document.querySelectorAll('.play-musica').forEach(img => {
-    img.addEventListener('click', () => {
-
-      const audioId = img.getAttribute('data-audio');
-      const audio = document.getElementById(audioId);
-
-      if (audioAtual && audioAtual !== audio) {
-        audioAtual.pause();
-        audioAtual.currentTime = 0;
-      }
-
-      if (audio.paused) {
-        audio.play();
-        audioAtual = audio;
-      } else {
-        audio.pause();
-        audioAtual = null;
-      }
-
-    });
-  });
-  </script>
 
 </body>
 </html>
