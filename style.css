@@ -10,11 +10,11 @@ body {
   min-height: 100vh;
   background: linear-gradient(
     120deg,
-    #ff003c,
-    #d0005f,
-    #7b2cff,
-    #4b0082,
-    #ff003c
+    #3d126e,
+    #630c0c,
+    #3d126e,
+    #630c0c,
+    #3d126e
   );
   background-size: 400% 400%;
   animation: sangue 10s ease infinite;
