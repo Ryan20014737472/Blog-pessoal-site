@@ -108,15 +108,15 @@ hr {
   background: linear-gradient(
     90deg,
     transparent,
-    #ff003c,
-    #ff4d6d,
-    #ff003c,
+    #630c0c,
+    #3d126e,
+    #630c0c,
     transparent
   );
   box-shadow:
-    0 0 8px #ff003c,
-    0 0 16px #ff003c,
-    0 0 30px rgba(255, 0, 60, 0.7);
+    0 0 8px #630c0c,
+    0 0 16px #3d126e,
+    0 0 30px rgba(61, 18, 110, 0.7);
   position: relative;
   left: 50%;
   transform: translateX(-50%);
