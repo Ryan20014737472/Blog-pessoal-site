@@ -2,16 +2,25 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Batistel World — um arquivo pessoal de memórias, amizades e momentos especiais.">
+  <meta name="theme-color" content="#3d126e">
   <title>👑BLOG BATISTEL👑</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <img class="titulo-img" src="título.png" alt="Batistel World">
-  <p>✨This is my little world✨</p>
+<header class="hero" id="topo">
+  <div class="hero__content">
+    <p class="hero__eyebrow">Arquivo pessoal</p>
+    <h1 class="sr-only">Batistel World</h1>
+    <img class="titulo-img" src="título.png" alt="Batistel World" fetchpriority="high">
+    <p class="hero__subtitle">✨This is my little world✨</p>
+    <a class="hero__cta" href="#memorias">Explorar memórias <span aria-hidden="true">↓</span></a>
+  </div>
 </header>
-  <main>
+
+<main id="memorias" tabindex="-1">
 
     <!-- MOMENTO 1 -->
     <article class="post">
@@ -602,14 +611,8 @@
   </main>
 
 
-<footer>
-
-<p>
-© BATISTEL WORLD👑
-</p>
-
+<footer class="site-footer">
+  <p>© BATISTEL WORLD <span aria-hidden="true">👑</span></p>
 </footer>
 </body>
 </html>
-</body>
-          </html>
