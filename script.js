@@ -3,6 +3,20 @@ document.documentElement.classList.add("js");
 
 const posts = Array.from(document.querySelectorAll(".post"));
 
+const showMediaFallback = (media, message) => {
+  if (media.dataset.mediaFallback === "true") return;
+
+  media.dataset.mediaFallback = "true";
+
+  const fallback = document.createElement("div");
+  fallback.className = "media-fallback";
+  fallback.setAttribute("role", "img");
+  fallback.setAttribute("aria-label", message);
+  fallback.textContent = message;
+
+  media.replaceWith(fallback);
+};
+
 posts.forEach((post, index) => {
   post.dataset.reveal = "";
   post.style.setProperty("--reveal-delay", Math.min(index * 45, 320) + "ms");
@@ -10,6 +24,35 @@ posts.forEach((post, index) => {
   post.querySelectorAll("img").forEach((image) => {
     image.loading = "lazy";
     image.decoding = "async";
+
+    const showImageFallback = () => {
+      showMediaFallback(image, "Esta imagem não pôde ser carregada.");
+    };
+
+    image.addEventListener("error", showImageFallback, { once: true });
+
+    if (image.complete && image.naturalWidth === 0) {
+      showImageFallback();
+    }
+  });
+
+  post.querySelectorAll("video").forEach((video) => {
+    video.playsInline = true;
+    video.preload = "metadata";
+    video.setAttribute("playsinline", "");
+
+    const showVideoFallback = () => {
+      showMediaFallback(video, "Este vídeo não pôde ser carregado.");
+    };
+
+    video.addEventListener("error", showVideoFallback, { once: true });
+    video.querySelectorAll("source").forEach((source) => {
+      source.addEventListener("error", showVideoFallback, { once: true });
+    });
+
+    if (video.error) {
+      showVideoFallback();
+    }
   });
 });
 
