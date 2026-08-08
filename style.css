@@ -56,7 +56,7 @@ body::before {
   content: "";
   pointer-events: none;
   opacity: 0.09;
-  background: url("gengar.gif") center / cover no-repeat;
+  background: url("assets/images/gengar.gif") center / cover no-repeat;
   filter: saturate(0.65) contrast(1.08);
 }
 
