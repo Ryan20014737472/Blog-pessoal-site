@@ -563,7 +563,7 @@ body.pagina-dois {
 
 body.pagina-dois::before {
   opacity: 0.34;
-  background-image: url("assets/images/charizard.gif");
+  background-image: url("assets/images/charizard.gif?v=2");
   background-repeat: no-repeat;
   background-position: center;
   background-size: min(72vw, 820px) auto;
