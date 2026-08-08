@@ -555,17 +555,24 @@ body.pagina-dois {
   --texto-suave: rgba(255, 247, 211, 0.82);
   --borda: rgba(245, 181, 27, 0.26);
   --sombra: rgba(20, 10, 13, 0.58);
-  background:
+  background-image:
+    linear-gradient(rgba(32, 38, 43, 0.34), rgba(143, 30, 61, 0.28)),
+    url("assets/images/charizard.gif?v=4"),
     radial-gradient(circle at 12% -8%, rgba(143, 30, 61, 0.88), transparent 32rem),
-    radial-gradient(circle at 100% 44%, rgba(245, 181, 27, 0.3), transparent 38rem),
+    radial-gradient(circle at 100% 44%, rgba(245, 181, 27, 0.30), transparent 38rem),
     linear-gradient(135deg, #20262b 0%, #8f1e3d 58%, #f5b51b 100%);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover, min(78vw, 900px) auto, auto, auto, auto;
+  background-attachment: fixed;
 }
 
 body.pagina-dois::before {
-  opacity: 0.34;
-  background-image: url("assets/images/charizard.gif?v=2");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: min(72vw, 820px) auto;
-  filter: saturate(1.05) contrast(1.08);
+  display: none;
+}
+
+body.pagina-dois .hero {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.08), transparent 24rem),
+    linear-gradient(145deg, rgba(32, 38, 43, 0.42), rgba(143, 30, 61, 0.28));
 }
