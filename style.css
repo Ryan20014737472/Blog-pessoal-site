@@ -545,3 +545,26 @@ hr {
     justify-content: center;
   }
 }
+
+
+/* Paleta e fundo exclusivos da página 2, inspirados no Charizard. */
+body.pagina-dois {
+  --roxo: #8f1e3d;
+  --vermelho: #f5b51b;
+  --fundo: #20262b;
+  --texto-suave: rgba(255, 247, 211, 0.82);
+  --borda: rgba(245, 181, 27, 0.26);
+  --sombra: rgba(20, 10, 13, 0.58);
+  background:
+    radial-gradient(circle at 12% -8%, rgba(143, 30, 61, 0.88), transparent 32rem),
+    radial-gradient(circle at 100% 44%, rgba(245, 181, 27, 0.3), transparent 38rem),
+    linear-gradient(135deg, #20262b 0%, #8f1e3d 58%, #f5b51b 100%);
+}
+
+body.pagina-dois::before {
+  opacity: 0.15;
+  background-image: url("assets/images/charizard.gif");
+  background-position: center;
+  background-size: cover;
+  filter: saturate(0.9) contrast(1.05);
+}
