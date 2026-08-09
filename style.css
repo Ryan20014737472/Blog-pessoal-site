@@ -576,3 +576,30 @@ body.pagina-dois .hero {
     radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.08), transparent 24rem),
     linear-gradient(145deg, rgba(32, 38, 43, 0.42), rgba(143, 30, 61, 0.28));
 }
+
+
+/* Barra de rolagem exclusiva da página 2. */
+html.pagina-dois-root {
+  scrollbar-color: #f5b51b rgba(32, 38, 43, 0.88);
+  scrollbar-width: thin;
+}
+
+html.pagina-dois-root::-webkit-scrollbar {
+  width: 14px;
+}
+
+html.pagina-dois-root::-webkit-scrollbar-track {
+  background: rgba(32, 38, 43, 0.88);
+  border-left: 1px solid rgba(245, 181, 27, 0.24);
+}
+
+html.pagina-dois-root::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f5b51b 0%, #b52c3f 55%, #8f1e3d 100%);
+  border: 3px solid rgba(32, 38, 43, 0.88);
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(245, 181, 27, 0.42);
+}
+
+html.pagina-dois-root::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffd461 0%, #d7444e 55%, #a82548 100%);
+}
