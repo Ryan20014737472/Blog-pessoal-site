@@ -603,3 +603,30 @@ html.pagina-dois-root::-webkit-scrollbar-thumb {
 html.pagina-dois-root::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #ffd461 0%, #d7444e 55%, #a82548 100%);
 }
+
+
+/* Barra de rolagem da página 1, alinhada ao tema roxo e vermelho. */
+html.pagina-um-root {
+  scrollbar-color: #630c0c #14081d;
+  scrollbar-width: thin;
+}
+
+html.pagina-um-root::-webkit-scrollbar {
+  width: 14px;
+}
+
+html.pagina-um-root::-webkit-scrollbar-track {
+  background: #14081d;
+  border-left: 1px solid rgba(255, 250, 255, 0.12);
+}
+
+html.pagina-um-root::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3d126e 0%, #630c0c 100%);
+  border: 3px solid #14081d;
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(99, 12, 12, 0.45);
+}
+
+html.pagina-um-root::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #56208d 0%, #8d1717 100%);
+}
