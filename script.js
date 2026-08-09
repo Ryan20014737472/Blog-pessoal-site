@@ -3,6 +3,13 @@ document.documentElement.classList.add("js");
 
 const posts = Array.from(document.querySelectorAll(".post"));
 
+const memoryRange = document.querySelector("[data-memory-range]");
+if (memoryRange) {
+  const start = Number(memoryRange.dataset.memoryStart) || 1;
+  const end = start + posts.length - 1;
+  memoryRange.textContent = "Memórias " + start + " a " + end;
+}
+
 const showMediaFallback = (media, message) => {
   if (media.dataset.mediaFallback === "true") return;
 
