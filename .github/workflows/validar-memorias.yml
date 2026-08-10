@@ -1,0 +1,37 @@
+name: Validar memórias
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "memorias.js"
+      - "assets/**"
+      - "scripts/validar-memorias.cjs"
+      - ".github/workflows/validar-memorias.yml"
+  pull_request:
+    paths:
+      - "memorias.js"
+      - "assets/**"
+      - "scripts/validar-memorias.cjs"
+      - ".github/workflows/validar-memorias.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    name: Conferir memórias e arquivos
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Preparar o Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validar memórias
+        run: node scripts/validar-memorias.cjs
