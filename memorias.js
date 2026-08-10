@@ -623,6 +623,22 @@ const MEMORIAS = [
       "mime": "audio/mpeg"
     }
   }
+ {
+    "titulo": "caixas Acrux",
+    "texto": "mais uma das minhas criações, elas foram entregues para os juízes na TBR, ou seja a Acrux só ganhou por causa de mim (a montagem tava errada mas faz parte)",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/caixas.jpeg",
+      "alt": "box.goodgood"
+    },
+    "audio": {
+      "arquivo": "assets/audio/bigbox.mp3",
+      "mime": "audio/mpeg"
+    }
+  }
+
+
+  
 ];
 
 if (typeof window !== "undefined") {
