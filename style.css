@@ -782,3 +782,39 @@ html.pagina-tres-root::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #54c7ff 0%, #0084f7 36%, #ff9d2e 70%, #ff4317 100%);
 }
 
+/* Ações do topo: navegação principal e memória aleatória. */
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-top: clamp(30px, 5vw, 44px);
+}
+
+.hero__actions .hero__cta {
+  margin-top: 0;
+}
+
+.hero__cta--secondary {
+  cursor: pointer;
+  font-family: inherit;
+  background: rgba(8, 1, 13, 0.52);
+  backdrop-filter: blur(12px);
+}
+
+.hero__cta--secondary:hover {
+  background: rgba(8, 1, 13, 0.72);
+}
+
+body.pagina-tres .hero__cta--secondary {
+  background: rgba(0, 0, 16, 0.72);
+}
+
+.post video[data-video-loaded="false"] {
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 45%),
+    linear-gradient(135deg, rgba(61, 18, 110, 0.38), rgba(99, 12, 12, 0.25)),
+    rgba(8, 1, 13, 0.62);
+}
+

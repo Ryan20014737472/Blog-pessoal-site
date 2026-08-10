@@ -31,11 +31,16 @@ const createMedia = (memory, memoryNumber, audioId) => {
     video.className = "midia";
     video.controls = true;
     video.playsInline = true;
-    video.preload = "metadata";
+    video.preload = "none";
+    video.dataset.videoLoaded = "false";
     video.setAttribute("playsinline", "");
+    video.setAttribute(
+      "aria-label",
+      "Vídeo da memória " + memoryNumber + ": " + memory.titulo
+    );
 
     const source = document.createElement("source");
-    source.src = media.arquivo;
+    source.dataset.src = media.arquivo;
     source.type = media.mime || "video/mp4";
     video.append(source);
 
@@ -251,6 +256,47 @@ const initializeMedia = (posts) => {
   });
 };
 
+
+const initializeLazyVideos = (posts) => {
+  const videos = posts.flatMap((post) =>
+    Array.from(post.querySelectorAll("video[data-video-loaded=\"false\"]"))
+  );
+
+  const loadVideo = (video) => {
+    if (video.dataset.videoLoaded === "true") return;
+
+    video.querySelectorAll("source[data-src]").forEach((source) => {
+      source.src = source.dataset.src;
+      delete source.dataset.src;
+    });
+
+    video.dataset.videoLoaded = "true";
+    video.preload = "metadata";
+    video.load();
+  };
+
+  if (!("IntersectionObserver" in window)) {
+    videos.forEach(loadVideo);
+    return;
+  }
+
+  const videoObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        loadVideo(entry.target);
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      rootMargin: "900px 0px",
+      threshold: 0.01
+    }
+  );
+
+  videos.forEach((video) => videoObserver.observe(video));
+};
+
 const initializeReadingUi = () => {
   const progress = document.createElement("div");
   progress.id = "reading-progress";
@@ -364,8 +410,65 @@ const initializeAudio = () => {
   });
 };
 
+
+const initializeRandomMemoryButton = () => {
+  const primaryAction = document.querySelector(".hero__cta");
+  if (!primaryAction || !memories.length) return;
+
+  const actions = document.createElement("div");
+  actions.className = "hero__actions";
+  primaryAction.before(actions);
+  actions.append(primaryAction);
+
+  const randomButton = document.createElement("button");
+  randomButton.className =
+    "hero__cta hero__cta--secondary memory-random-button";
+  randomButton.type = "button";
+  randomButton.textContent = "🎲 Memória aleatória";
+  randomButton.setAttribute(
+    "aria-label",
+    "Abrir uma memória escolhida aleatoriamente"
+  );
+
+  randomButton.addEventListener("click", () => {
+    const randomIndex = Math.floor(Math.random() * memories.length);
+    const memoryNumber = randomIndex + 1;
+    const targetPage =
+      Math.floor(randomIndex / MEMORIES_PER_PAGE) + 1;
+
+    window.location.assign(
+      pageUrl(targetPage) + "#memoria-" + memoryNumber
+    );
+  });
+
+  actions.append(randomButton);
+};
+
+const scrollToRequestedMemory = () => {
+  if (!window.location.hash.startsWith("#memoria-")) return;
+
+  const target = document.querySelector(window.location.hash);
+  if (!target) return;
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      target.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "center"
+      });
+    });
+  });
+};
+
 const posts = renderMemories();
+initializeRandomMemoryButton();
 initializeMedia(posts);
+initializeLazyVideos(posts);
 initializeReadingUi();
 initializeReveal(posts);
 initializeAudio();
+scrollToRequestedMemory();

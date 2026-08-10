@@ -4,15 +4,19 @@ on:
   push:
     branches: [main]
     paths:
-      - "memorias.js"
+      - "*.html"
+      - "*.js"
+      - "*.css"
       - "assets/**"
-      - "scripts/validar-memorias.cjs"
+      - "scripts/**"
       - ".github/workflows/validar-memorias.yml"
   pull_request:
     paths:
-      - "memorias.js"
+      - "*.html"
+      - "*.js"
+      - "*.css"
       - "assets/**"
-      - "scripts/validar-memorias.cjs"
+      - "scripts/**"
       - ".github/workflows/validar-memorias.yml"
   workflow_dispatch:
 
@@ -21,7 +25,7 @@ permissions:
 
 jobs:
   validar:
-    name: Conferir memórias e arquivos
+    name: Conferir site, memórias e arquivos
     runs-on: ubuntu-latest
 
     steps:
@@ -33,5 +37,5 @@ jobs:
         with:
           node-version: 20
 
-      - name: Validar memórias
+      - name: Validar site completo
         run: node scripts/validar-memorias.cjs

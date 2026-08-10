@@ -3,11 +3,12 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const memories = require("../memorias.js");
+const vm = require("node:vm");
 
 const root = path.resolve(__dirname, "..");
 const errors = [];
 const warnings = [];
+const reportedPaths = new Set();
 
 const rules = {
   imagem: {
@@ -24,22 +25,83 @@ const rules = {
   }
 };
 
-const addError = (number, message) => {
+const addMemoryError = (number, message) => {
   errors.push("Memória " + number + ": " + message);
 };
 
-const validateFile = (number, file, type) => {
-  const rule = rules[type];
+const normalizeReference = (reference) => {
+  const withoutQuery = reference.split(/[?#]/, 1)[0].trim();
+  try {
+    return decodeURIComponent(withoutQuery).replace(/\\/g, "/");
+  } catch {
+    return withoutQuery.replace(/\\/g, "/");
+  }
+};
 
-  if (typeof file !== "string" || !file.trim()) {
-    addError(number, "arquivo de " + type + " não informado.");
+const validateLocalReference = (reference, context) => {
+  if (
+    typeof reference !== "string" ||
+    !reference.trim() ||
+    reference.startsWith("#") ||
+    /^(?:https?:|data:|mailto:|tel:|javascript:)/i.test(reference)
+  ) {
     return;
   }
 
-  const normalized = file.replace(/\\/g, "/");
+  const normalized = normalizeReference(reference);
+  if (!normalized) return;
+
+  const absolute = path.resolve(root, normalized);
+  const key = context + "::" + normalized;
+
+  if (!absolute.startsWith(root + path.sep)) {
+    if (!reportedPaths.has(key)) {
+      errors.push(context + ": caminho fora do projeto: " + normalized);
+      reportedPaths.add(key);
+    }
+    return;
+  }
+
+  if (!fs.existsSync(absolute) || !fs.statSync(absolute).isFile()) {
+    if (!reportedPaths.has(key)) {
+      errors.push(context + ": arquivo não encontrado: " + normalized);
+      reportedPaths.add(key);
+    }
+  }
+};
+
+const compileJavaScript = (file) => {
+  const absolute = path.join(root, file);
+
+  if (!fs.existsSync(absolute)) {
+    errors.push("Código: arquivo não encontrado: " + file);
+    return false;
+  }
+
+  try {
+    new vm.Script(fs.readFileSync(absolute, "utf8"), { filename: file });
+    return true;
+  } catch (error) {
+    errors.push(
+      "Código inválido em " + file + ": " +
+        String(error.message || error)
+    );
+    return false;
+  }
+};
+
+const validateMemoryFile = (number, file, type) => {
+  const rule = rules[type];
+
+  if (typeof file !== "string" || !file.trim()) {
+    addMemoryError(number, "arquivo de " + type + " não informado.");
+    return;
+  }
+
+  const normalized = normalizeReference(file);
 
   if (!normalized.startsWith(rule.folder)) {
-    addError(
+    addMemoryError(
       number,
       "o arquivo " + JSON.stringify(file) + " deve ficar em " + rule.folder
     );
@@ -47,23 +109,30 @@ const validateFile = (number, file, type) => {
 
   const extension = path.extname(normalized).toLowerCase();
   if (!rule.extensions.has(extension)) {
-    addError(
+    addMemoryError(
       number,
       "extensão " + JSON.stringify(extension || "(sem extensão)") +
         " não é válida para " + type + "."
     );
   }
 
-  const absolute = path.resolve(root, normalized);
-  if (!absolute.startsWith(root + path.sep)) {
-    addError(number, "o caminho do arquivo sai da pasta do projeto.");
-    return;
-  }
-
-  if (!fs.existsSync(absolute) || !fs.statSync(absolute).isFile()) {
-    addError(number, "arquivo não encontrado: " + normalized);
-  }
+  validateLocalReference(normalized, "Memória " + number);
 };
+
+const memoryCodeIsValid = compileJavaScript("memorias.js");
+compileJavaScript("script.js");
+
+let memories = [];
+if (memoryCodeIsValid) {
+  try {
+    memories = require("../memorias.js");
+  } catch (error) {
+    errors.push(
+      "Não foi possível carregar memorias.js: " +
+        String(error.message || error)
+    );
+  }
+}
 
 if (!Array.isArray(memories) || memories.length === 0) {
   errors.push("memorias.js precisa exportar uma lista com pelo menos uma memória.");
@@ -72,33 +141,33 @@ if (!Array.isArray(memories) || memories.length === 0) {
     const number = index + 1;
 
     if (!memory || typeof memory !== "object") {
-      addError(number, "cadastro inválido.");
+      addMemoryError(number, "cadastro inválido.");
       return;
     }
 
     if (typeof memory.titulo !== "string" || !memory.titulo.trim()) {
-      addError(number, "título não informado.");
+      addMemoryError(number, "título não informado.");
     }
 
     if (typeof memory.texto !== "string" || !memory.texto.trim()) {
-      addError(number, "texto não informado.");
+      addMemoryError(number, "texto não informado.");
     }
 
     if (!memory.midia || !rules[memory.midia.tipo]) {
-      addError(number, 'midia.tipo deve ser "imagem" ou "video".');
+      addMemoryError(number, 'midia.tipo deve ser "imagem" ou "video".');
     } else {
-      validateFile(number, memory.midia.arquivo, memory.midia.tipo);
+      validateMemoryFile(number, memory.midia.arquivo, memory.midia.tipo);
 
       if (
         memory.midia.tipo === "imagem" &&
         (typeof memory.midia.alt !== "string" || !memory.midia.alt.trim())
       ) {
-        addError(number, "a descrição alt da imagem não foi informada.");
+        addMemoryError(number, "a descrição alt da imagem não foi informada.");
       }
     }
 
     if (memory.audio) {
-      validateFile(number, memory.audio.arquivo, "audio");
+      validateMemoryFile(number, memory.audio.arquivo, "audio");
     }
   });
 
@@ -119,6 +188,88 @@ if (!Array.isArray(memories) || memories.length === 0) {
   });
 }
 
+const htmlFiles = fs
+  .readdirSync(root)
+  .filter((file) => file === "index.html" || /^pagina\d+\.html$/.test(file))
+  .sort();
+
+if (!htmlFiles.includes("index.html")) {
+  errors.push("Página obrigatória não encontrada: index.html");
+}
+
+["pagina2.html", "pagina3.html"].forEach((page) => {
+  if (!htmlFiles.includes(page)) {
+    errors.push("Página obrigatória não encontrada: " + page);
+  }
+});
+
+const htmlReferencePattern = /\b(?:src|href)=["']([^"']+)["']/gi;
+const cssReferencePattern = /url\(\s*(['"]?)([^'")]+)\1\s*\)/gi;
+
+htmlFiles.forEach((file) => {
+  const source = fs.readFileSync(path.join(root, file), "utf8");
+
+  if (!/<main\b[^>]*id=["']memorias["']/i.test(source)) {
+    errors.push(file + ': elemento <main id="memorias"> não encontrado.');
+  }
+
+  ["style.css", "memorias.js", "script.js"].forEach((required) => {
+    if (!source.includes(required)) {
+      errors.push(file + ": referência obrigatória ausente: " + required);
+    }
+  });
+
+  for (const match of source.matchAll(htmlReferencePattern)) {
+    validateLocalReference(match[1], file);
+  }
+
+  for (const match of source.matchAll(cssReferencePattern)) {
+    validateLocalReference(match[2], file + " (estilo interno)");
+  }
+
+  const inlineScriptPattern = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;
+  for (const match of source.matchAll(inlineScriptPattern)) {
+    if (!match[1].trim()) continue;
+    try {
+      new vm.Script(match[1], { filename: file + " (script interno)" });
+    } catch (error) {
+      errors.push(
+        "Código inválido em " + file + ": " +
+          String(error.message || error)
+      );
+    }
+  }
+});
+
+const cssFile = path.join(root, "style.css");
+if (!fs.existsSync(cssFile)) {
+  errors.push("Arquivo obrigatório não encontrado: style.css");
+} else {
+  const css = fs.readFileSync(cssFile, "utf8");
+  for (const match of css.matchAll(cssReferencePattern)) {
+    validateLocalReference(match[2], "style.css");
+  }
+
+  const opens = (css.match(/\{/g) || []).length;
+  const closes = (css.match(/\}/g) || []).length;
+  if (opens !== closes) {
+    errors.push(
+      "style.css possui chaves desequilibradas: " +
+        opens + " aberturas e " + closes + " fechamentos."
+    );
+  }
+}
+
+const workflow = path.join(
+  root,
+  ".github",
+  "workflows",
+  "validar-memorias.yml"
+);
+if (!fs.existsSync(workflow)) {
+  errors.push("Workflow de validação não encontrado.");
+}
+
 warnings.forEach((warning) => console.warn("AVISO: " + warning));
 
 if (errors.length) {
@@ -128,6 +279,6 @@ if (errors.length) {
 }
 
 console.log(
-  "Tudo certo: " + memories.length +
-    " memórias e todos os arquivos referenciados foram validados."
+  "Tudo certo: " + memories.length + " memórias, " +
+    htmlFiles.length + " páginas, código válido e caminhos conferidos."
 );
