@@ -2,6 +2,7 @@
 document.documentElement.classList.add("js");
 
 const MEMORIES_PER_PAGE = 30;
+const MINIMUM_PAGES = 3;
 const memories = Array.isArray(window.BLOG_MEMORIES)
   ? window.BLOG_MEMORIES
   : [];
@@ -9,7 +10,8 @@ const memories = Array.isArray(window.BLOG_MEMORIES)
 const pageUrl = (page) => {
   if (page <= 1) return "index.html";
   if (page === 2) return "pagina2.html";
-  return "pagina2.html?pagina=" + page;
+  if (page === 3) return "pagina3.html";
+  return "pagina3.html?pagina=" + page;
 };
 
 const createPaginationLink = (label, page, relation) => {
@@ -98,19 +100,26 @@ const renderMemories = () => {
   const main = document.getElementById("memorias");
   if (!main) return [];
 
-  const isArchivePage = document.body.classList.contains("pagina-dois");
+  const defaultPage = document.body.classList.contains("pagina-tres")
+    ? 3
+    : document.body.classList.contains("pagina-dois")
+      ? 2
+      : 1;
   const requestedPage = Number.parseInt(
     new URLSearchParams(window.location.search).get("pagina"),
     10
   );
   const totalPages = Math.max(
-    1,
+    MINIMUM_PAGES,
     Math.ceil(memories.length / MEMORIES_PER_PAGE)
   );
 
-  let currentPage = isArchivePage
-    ? Math.max(2, Number.isFinite(requestedPage) ? requestedPage : 2)
-    : 1;
+  let currentPage = defaultPage === 1
+    ? 1
+    : Math.max(
+        defaultPage,
+        Number.isFinite(requestedPage) ? requestedPage : defaultPage
+      );
   currentPage = Math.min(currentPage, totalPages);
 
   const firstMemoryIndex = (currentPage - 1) * MEMORIES_PER_PAGE;
@@ -119,12 +128,28 @@ const renderMemories = () => {
     firstMemoryIndex + MEMORIES_PER_PAGE
   );
 
-  main.querySelectorAll(".post, hr, [data-memory-loading]").forEach(
+  main.querySelectorAll(".post, hr, .empty-memories, [data-memory-loading]").forEach(
     (element) => element.remove()
   );
 
   const pagination = main.querySelector(".pagination");
   const fragment = document.createDocumentFragment();
+
+  if (!visibleMemories.length) {
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-memories";
+
+    const emptyTitle = document.createElement("h2");
+    emptyTitle.textContent = "A próxima memória começa aqui";
+
+    const emptyText = document.createElement("p");
+    emptyText.textContent =
+      "Quando a memória " + (firstMemoryIndex + 1) +
+      " for adicionada em memorias.js, ela aparecerá nesta página automaticamente.";
+
+    emptyState.append(emptyTitle, emptyText);
+    fragment.append(emptyState);
+  }
 
   visibleMemories.forEach((memory, offset) => {
     fragment.append(createMemoryArticle(memory, firstMemoryIndex + offset));
@@ -138,10 +163,12 @@ const renderMemories = () => {
 
   const memoryRange = document.querySelector("[data-memory-range]");
   if (memoryRange) {
-    const first = visibleMemories.length ? firstMemoryIndex + 1 : 0;
+    const first = firstMemoryIndex + 1;
     const last = firstMemoryIndex + visibleMemories.length;
     memoryRange.dataset.memoryStart = String(first);
-    memoryRange.textContent = "Memórias " + first + " a " + last;
+    memoryRange.textContent = visibleMemories.length
+      ? "Memórias " + first + " a " + last
+      : "Próximas memórias a partir da " + first;
   }
 
   if (pagination) {
