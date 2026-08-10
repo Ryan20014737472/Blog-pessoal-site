@@ -241,6 +241,7 @@ const initializeMedia = (posts) => {
 
     post.querySelectorAll("video").forEach((video) => {
       const showVideoFallback = () => {
+        if (video.dataset.videoLoaded !== "true") return;
         showMediaFallback(video, "Este vídeo não pôde ser carregado.");
       };
 
