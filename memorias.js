@@ -622,8 +622,8 @@ const MEMORIAS = [
       "arquivo": "assets/audio/trophy.mp3",
       "mime": "audio/mpeg"
     }
-  }
- {
+  },
+  {
     "titulo": "caixas Acrux",
     "texto": "mais uma das minhas criações, elas foram entregues para os juízes na TBR, ou seja a Acrux só ganhou por causa de mim (a montagem tava errada mas faz parte)",
     "midia": {
