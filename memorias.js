@@ -662,7 +662,7 @@ const MEMORIAS = [
       "arquivo": "assets/audio/vitoria.mp3",
       "mime": "audio/mpeg"
     }
-  },
+  }
 
   
 ];
