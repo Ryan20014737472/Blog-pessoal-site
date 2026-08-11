@@ -636,8 +636,19 @@ const MEMORIAS = [
       "mime": "audio/mpeg"
     }
   }
-
-
+  {
+    "titulo": "O Carlos",
+    "texto": "Esse é o carlos a porra do deus do CAD, This is a made in heaven.",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/carlos.jpg",
+      "alt": "the god"
+    },
+    "audio": {
+      "arquivo": "assets/audio/carlos.mp3",
+      "mime": "audio/mpeg"
+    }
+    }
   
 ];
 
