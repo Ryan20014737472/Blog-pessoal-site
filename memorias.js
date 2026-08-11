@@ -635,7 +635,7 @@ const MEMORIAS = [
       "arquivo": "assets/audio/bigbox.mp3",
       "mime": "audio/mpeg"
     }
-  }
+  },
   {
     "titulo": "O Carlos",
     "texto": "Esse é o carlos a porra do deus do CAD, This is a made in heaven.",
