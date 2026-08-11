@@ -648,7 +648,22 @@ const MEMORIAS = [
       "arquivo": "assets/audio/carlos.mp3",
       "mime": "audio/mpeg"
     }
+    },
+
+  {
+    "titulo": "TBR",
+    "texto": "O momento que eu nunca pensei que chegaria: a TBR. Definitivamente, foi uma das melhores competições da minha vida. Nunca vi a Acrux tão unida quanto naquele dia. Cada detalhe, cada esforço e cada momento foram necessários para nos trazer até aquele momento: o primeiro lugar no Torneio Brasil de Robótica.",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/vitoria.jpg",
+      "alt": "victory"
+    },
+    "audio": {
+      "arquivo": "assets/audio/vitoria.mp3",
+      "mime": "audio/mpeg"
     }
+  },
+
   
 ];
 
