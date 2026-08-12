@@ -271,6 +271,18 @@ if (!fs.existsSync(workflow)) {
   errors.push("Workflow de validação não encontrado.");
 }
 
+const alertTestFlag = path.join(
+  root,
+  "scripts",
+  "testar-alerta.flag"
+);
+if (fs.existsSync(alertTestFlag)) {
+  errors.push(
+    "TESTE CONTROLADO: o assistente detectou um erro simulado. " +
+      "Nenhum arquivo do site foi danificado."
+  );
+}
+
 warnings.forEach((warning) => console.warn("AVISO: " + warning));
 
 if (errors.length) {
