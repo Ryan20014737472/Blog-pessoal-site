@@ -38,4 +38,25 @@ jobs:
           node-version: 20
 
       - name: Validar site completo
-        run: node scripts/validar-memorias.cjs
+        id: validacao
+        shell: bash
+        run: |
+          set +e
+          node scripts/validar-memorias.cjs > resultado-validacao.txt 2>&1
+          status=$?
+          cat resultado-validacao.txt
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Enviar diagnóstico por e-mail
+        if: steps.validacao.outputs.status != '0' && github.event_name != 'pull_request'
+        continue-on-error: true
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+          ALERT_FROM: ${{ secrets.ALERT_FROM }}
+        run: node scripts/enviar-alerta-validacao.cjs resultado-validacao.txt
+
+      - name: Marcar a validação como falha
+        if: steps.validacao.outputs.status != '0'
+        run: exit 1
