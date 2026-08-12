@@ -45,6 +45,10 @@ O e-mail inclui:
 
 Alertas não são enviados em pull requests externos, porque os Secrets não ficam disponíveis nesse contexto.
 
-## 4. Testar
+## 4. Testar sem quebrar o site
 
-Abra **Actions → Validar memórias → Run workflow**. Para testar o envio, a validação precisa encontrar um problema real. Depois de corrigido, execute novamente e confirme que a verificação fica verde.
+1. Abra **Actions → Validar memórias → Run workflow**.
+2. Marque **Enviar um e-mail de teste sem alterar o site**.
+3. Clique em **Run workflow**.
+
+O e-mail terá o assunto **TESTE — Assistente do Blog Pessoal** e deixará claro que nenhum erro foi inserido. Se o site estiver válido, a execução continuará verde.
