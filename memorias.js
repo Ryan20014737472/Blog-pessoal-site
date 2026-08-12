@@ -663,20 +663,6 @@ const MEMORIAS = [
       "mime": "audio/mpeg"
     }
   }
- {
-    "titulo": "Título",
-    "texto": "Descrição",
-    "midia": {
-      "tipo": "imagem",
-      "arquivo": "assets/images/foto.jpg",
-      "alt": "Descrição da foto"
-    },
-    "audio": {
-      "arquivo": "assets/audio/musica.mp3",
-      "mime": "audio/mpeg"
-    }
-  },
-
   
 ];
 
