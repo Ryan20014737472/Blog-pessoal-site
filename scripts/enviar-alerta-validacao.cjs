@@ -2,12 +2,23 @@
 "use strict";
 
 const fs = require("node:fs");
+const {
+  generateValidationImage
+} = require("./gerar-print-validacao.cjs");
 
 const removeAnsi = (text) =>
   text.replace(/\u001b\[[0-9;]*m/g, "").trim();
 
 const normalizeText = (text) =>
   text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
+const escapeHtml = (value) =>
+  String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 const main = async () => {
   const isTest = process.env.ALERT_TEST === "true";
@@ -72,6 +83,42 @@ const main = async () => {
         "A validação será executada novamente automaticamente."
   ].filter(Boolean);
 
+  const validationImage = generateValidationImage({
+    report,
+    repository,
+    shortSha,
+    actor,
+    isTest
+  });
+  const heading = isTest
+    ? "Teste do assistente de alertas"
+    : "O assistente encontrou um erro";
+  const html = [
+    '<div style="margin:0;padding:24px;background:#f1f5f9;font-family:Arial,sans-serif;color:#0f172a">',
+    '<div style="max-width:900px;margin:0 auto;background:#ffffff;border-radius:16px;padding:28px">',
+    '<h1 style="margin:0 0 12px;font-size:24px;color:' +
+      (isTest ? "#16a34a" : "#dc2626") +
+      '">' +
+      escapeHtml(heading) +
+      "</h1>",
+    '<p style="line-height:1.6">Repositório: <strong>' +
+      escapeHtml(repository) +
+      "</strong><br>Commit: <strong>" +
+      escapeHtml(shortSha) +
+      "</strong><br>Alterado por: <strong>" +
+      escapeHtml(actor) +
+      "</strong></p>",
+    '<p><a href="' +
+      escapeHtml(commitUrl) +
+      '">Ver commit</a> &nbsp;|&nbsp; <a href="' +
+      escapeHtml(runUrl) +
+      '">Ver execução completa</a></p>',
+    '<img src="cid:validacao-print" alt="Imagem com o diagnóstico da validação" ' +
+      'style="display:block;width:100%;height:auto;margin:24px 0;border-radius:12px">',
+    '<p style="margin:0;color:#475569">A imagem também está anexada como arquivo PNG.</p>',
+    "</div></div>"
+  ].join("");
+
   const from =
     process.env.ALERT_FROM?.trim() ||
     "Blog Pessoal <onboarding@resend.dev>";
@@ -113,7 +160,18 @@ const main = async () => {
       subject: isTest
         ? "TESTE — Assistente do Blog Pessoal"
         : "Erro no Blog Pessoal — commit " + shortSha,
-      text: lines.join("\n")
+      text: lines.join("\n"),
+      html,
+      attachments: [
+        {
+          content: validationImage.toString("base64"),
+          filename: isTest
+            ? "teste-assistente.png"
+            : "erro-validacao-" + shortSha + ".png",
+          content_id: "validacao-print",
+          content_type: "image/png"
+        }
+      ]
     })
   });
 
