@@ -42,6 +42,7 @@ O e-mail inclui:
 - o caminho do arquivo ausente;
 - o commit responsável;
 - um link para a execução completa no GitHub Actions.
+- uma imagem PNG com aparência de captura de tela, exibida no corpo do e-mail e anexada.
 
 Alertas não são enviados em pull requests externos, porque os Secrets não ficam disponíveis nesse contexto.
 
