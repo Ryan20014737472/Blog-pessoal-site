@@ -122,6 +122,7 @@ const validateMemoryFile = (number, file, type) => {
 const memoryCodeIsValid = compileJavaScript("memorias.js");
 compileJavaScript("script.js");
 compileJavaScript("scripts/enviar-alerta-validacao.cjs");
+compileJavaScript("scripts/gerar-print-validacao.cjs");
 
 let memories = [];
 if (memoryCodeIsValid) {
