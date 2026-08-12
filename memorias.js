@@ -17,7 +17,7 @@
       "arquivo": "assets/audio/musica.mp3",
       "mime": "audio/mpeg"
     }
-  }
+  },
 
   Para vídeo, use "tipo": "video", a pasta assets/videos e "mime": "video/mp4".
   A propriedade "audio" é opcional.
@@ -663,6 +663,19 @@ const MEMORIAS = [
       "mime": "audio/mpeg"
     }
   }
+ {
+    "titulo": "Título",
+    "texto": "Descrição",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/foto.jpg",
+      "alt": "Descrição da foto"
+    },
+    "audio": {
+      "arquivo": "assets/audio/musica.mp3",
+      "mime": "audio/mpeg"
+    }
+  },
 
   
 ];
