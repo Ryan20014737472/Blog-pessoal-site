@@ -19,6 +19,12 @@ on:
       - "scripts/**"
       - ".github/workflows/validar-memorias.yml"
   workflow_dispatch:
+    inputs:
+      testar_alerta:
+        description: "Enviar um e-mail de teste sem alterar o site"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -48,13 +54,26 @@ jobs:
           echo "status=$status" >> "$GITHUB_OUTPUT"
           exit 0
 
+      - name: Preparar diagnóstico de teste
+        if: github.event_name == 'workflow_dispatch' && inputs.testar_alerta
+        shell: bash
+        run: |
+          printf '%s\n' \
+            'Teste concluído: o workflow capturou este diagnóstico simulado.' \
+            'Exemplo de erro real: Memória 63: arquivo não encontrado.' \
+            > resultado-validacao.txt
+
       - name: Enviar diagnóstico por e-mail
-        if: steps.validacao.outputs.status != '0' && github.event_name != 'pull_request'
+        if: >-
+          (steps.validacao.outputs.status != '0' ||
+          (github.event_name == 'workflow_dispatch' && inputs.testar_alerta)) &&
+          github.event_name != 'pull_request'
         continue-on-error: true
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
           ALERT_FROM: ${{ secrets.ALERT_FROM }}
+          ALERT_TEST: ${{ github.event_name == 'workflow_dispatch' && inputs.testar_alerta }}
         run: node scripts/enviar-alerta-validacao.cjs resultado-validacao.txt
 
       - name: Marcar a validação como falha
