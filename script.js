@@ -56,11 +56,6 @@ const createMedia = (memory, memoryNumber, audioId) => {
   image.loading = "lazy";
   image.decoding = "async";
 
-  if (audioId) {
-    image.classList.add("play-musica");
-    image.dataset.audio = audioId;
-  }
-
   return image;
 };
 
@@ -73,6 +68,26 @@ const createMemoryArticle = (memory, index) => {
 
   const audioId = memory.audio ? "audio-memoria-" + memoryNumber : "";
   article.append(createMedia(memory, memoryNumber, audioId));
+
+  if (memory.audio) {
+    const audioButton = document.createElement("button");
+    audioButton.className = "play-musica audio-player-button";
+    audioButton.type = "button";
+    audioButton.dataset.audio = audioId;
+    audioButton.setAttribute("aria-pressed", "false");
+
+    const audioIcon = document.createElement("span");
+    audioIcon.className = "audio-player-button__icon";
+    audioIcon.setAttribute("aria-hidden", "true");
+    audioIcon.textContent = "▶";
+
+    const audioLabel = document.createElement("span");
+    audioLabel.className = "audio-player-button__label";
+    audioLabel.textContent = "Tocar áudio";
+
+    audioButton.append(audioIcon, audioLabel);
+    article.append(audioButton);
+  }
 
   const text = document.createElement("div");
   text.className = "texto";
@@ -203,6 +218,240 @@ const renderMemories = () => {
   }
 
   return Array.from(main.querySelectorAll(".post"));
+};
+
+
+const normalizeSearchText = (value) =>
+  String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("pt-BR")
+    .trim();
+
+const memoryPage = (memoryIndex) =>
+  Math.floor(memoryIndex / MEMORIES_PER_PAGE) + 1;
+
+const initializeMemorySearch = () => {
+  const main = document.getElementById("memorias");
+  if (!main || !memories.length) return null;
+
+  const tools = document.createElement("section");
+  tools.className = "memory-tools";
+  tools.setAttribute("aria-labelledby", "memory-search-title");
+
+  const heading = document.createElement("h2");
+  heading.id = "memory-search-title";
+  heading.className = "memory-tools__title";
+  heading.textContent = "Encontre uma memória";
+
+  const description = document.createElement("p");
+  description.className = "memory-tools__description";
+  description.textContent =
+    "Digite o número ou uma palavra do título para ir direto à lembrança.";
+
+  const form = document.createElement("form");
+  form.className = "memory-search";
+  form.setAttribute("role", "search");
+
+  const label = document.createElement("label");
+  label.className = "sr-only";
+  label.htmlFor = "memory-search-input";
+  label.textContent = "Número ou título da memória";
+
+  const input = document.createElement("input");
+  input.id = "memory-search-input";
+  input.className = "memory-search__input";
+  input.type = "search";
+  input.inputMode = "search";
+  input.autocomplete = "off";
+  input.placeholder = "Ex.: 31 ou Pequeno Ryan";
+
+  const submit = document.createElement("button");
+  submit.className = "memory-search__submit";
+  submit.type = "submit";
+  submit.textContent = "Buscar";
+
+  const status = document.createElement("p");
+  status.className = "memory-search__status";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  status.textContent = memories.length + " memórias disponíveis.";
+
+  const results = document.createElement("ul");
+  results.className = "memory-search__results";
+  results.hidden = true;
+
+  form.append(label, input, submit);
+  tools.append(heading, description, form, status, results);
+  main.prepend(tools);
+
+  let matches = [];
+
+  const openMemory = (match) => {
+    if (!match) return;
+    window.location.assign(
+      pageUrl(memoryPage(match.index)) + "#memoria-" + (match.index + 1)
+    );
+  };
+
+  const renderResults = (query) => {
+    const normalizedQuery = normalizeSearchText(query);
+    results.replaceChildren();
+
+    if (!normalizedQuery) {
+      matches = [];
+      results.hidden = true;
+      status.textContent = memories.length + " memórias disponíveis.";
+      return;
+    }
+
+    const requestedNumber = /^\d+$/.test(normalizedQuery)
+      ? Number.parseInt(normalizedQuery, 10)
+      : null;
+
+    matches = memories
+      .map((memory, index) => ({
+        memory,
+        index,
+        title: normalizeSearchText(memory.titulo)
+      }))
+      .filter((entry) => {
+        if (requestedNumber !== null) {
+          return entry.index + 1 === requestedNumber;
+        }
+        return entry.title.includes(normalizedQuery);
+      });
+
+    if (!matches.length) {
+      results.hidden = true;
+      status.textContent =
+        "Nenhuma memória encontrada para “" + query.trim() + "”.";
+      return;
+    }
+
+    const visibleMatches = matches.slice(0, 8);
+    visibleMatches.forEach((entry) => {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      const number = entry.index + 1;
+      const page = memoryPage(entry.index);
+
+      link.className = "memory-search__result";
+      link.href = pageUrl(page) + "#memoria-" + number;
+
+      const resultNumber = document.createElement("span");
+      resultNumber.className = "memory-search__result-number";
+      resultNumber.textContent = "Memória " + number;
+
+      const resultTitle = document.createElement("strong");
+      resultTitle.textContent = entry.memory.titulo;
+
+      const resultPage = document.createElement("span");
+      resultPage.className = "memory-search__result-page";
+      resultPage.textContent = "Página " + page;
+
+      link.append(resultNumber, resultTitle, resultPage);
+      item.append(link);
+      results.append(item);
+    });
+
+    results.hidden = false;
+    status.textContent =
+      matches.length === 1
+        ? "1 memória encontrada."
+        : matches.length + " memórias encontradas.";
+  };
+
+  input.addEventListener("input", () => renderResults(input.value));
+  input.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    input.value = "";
+    renderResults("");
+    input.focus();
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    renderResults(input.value);
+    openMemory(matches[0]);
+  });
+
+  document.addEventListener("click", (event) => {
+    if (tools.contains(event.target)) return;
+    results.hidden = true;
+  });
+
+  return input;
+};
+
+const initializeFloatingPageNavigation = () => {
+  if (!memories.length) return;
+
+  const totalPages = Math.max(
+    MINIMUM_PAGES,
+    Math.ceil(memories.length / MEMORIES_PER_PAGE)
+  );
+  const firstRenderedMemory = Number.parseInt(
+    document.querySelector(".post")?.dataset.memoryNumber,
+    10
+  );
+  const currentPage = Number.isFinite(firstRenderedMemory)
+    ? memoryPage(firstRenderedMemory - 1)
+    : document.body.classList.contains("pagina-tres")
+      ? 3
+      : document.body.classList.contains("pagina-dois")
+        ? 2
+        : 1;
+
+  const navigation = document.createElement("nav");
+  navigation.className = "page-dock";
+  navigation.setAttribute("aria-label", "Acesso rápido às páginas");
+
+  const label = document.createElement("span");
+  label.className = "page-dock__label";
+  label.textContent = "Páginas";
+  navigation.append(label);
+
+  const pageList = document.createElement("div");
+  pageList.className = "page-dock__pages";
+
+  const visiblePages = [];
+  for (let page = 1; page <= totalPages; page += 1) {
+    if (
+      totalPages <= 5 ||
+      page === 1 ||
+      page === totalPages ||
+      Math.abs(page - currentPage) <= 1
+    ) {
+      visiblePages.push(page);
+    }
+  }
+
+  visiblePages.forEach((page, index) => {
+    if (index > 0 && page - visiblePages[index - 1] > 1) {
+      const ellipsis = document.createElement("span");
+      ellipsis.className = "page-dock__ellipsis";
+      ellipsis.textContent = "…";
+      ellipsis.setAttribute("aria-hidden", "true");
+      pageList.append(ellipsis);
+    }
+
+    const link = document.createElement("a");
+    link.className = "page-dock__link";
+    link.href = pageUrl(page) + "#memorias";
+    link.textContent = String(page);
+    link.setAttribute("aria-label", "Abrir página " + page);
+
+    if (page === currentPage) {
+      link.classList.add("is-current");
+      link.setAttribute("aria-current", "page");
+    }
+
+    pageList.append(link);
+  });
+
+  navigation.append(pageList);
+  document.body.append(navigation);
 };
 
 const showMediaFallback = (media, message) => {
@@ -351,30 +600,40 @@ const initializeReveal = (posts) => {
 const initializeAudio = () => {
   let currentAudio = null;
 
+  const setTriggerState = (audio, playing) => {
+    const trigger = document.querySelector(
+      '[data-audio="' + audio.id + '"]'
+    );
+    if (!trigger) return;
+
+    const title = trigger.closest(".post")?.querySelector("h2")
+      ?.textContent?.trim() || "esta memória";
+    const icon = trigger.querySelector(".audio-player-button__icon");
+    const label = trigger.querySelector(".audio-player-button__label");
+
+    trigger.setAttribute("aria-pressed", String(playing));
+    trigger.setAttribute(
+      "aria-label",
+      (playing ? "Pausar áudio de " : "Tocar áudio de ") + title
+    );
+    if (icon) icon.textContent = playing ? "Ⅱ" : "▶";
+    if (label) label.textContent = playing ? "Pausar áudio" : "Tocar áudio";
+    trigger.closest(".post")?.classList.toggle("is-playing", playing);
+  };
+
   const stopAudio = (audio) => {
     audio.pause();
     audio.currentTime = 0;
-    audio.closest(".post")?.classList.remove("is-playing");
-    document
-      .querySelector('[data-audio="' + audio.id + '"]')
-      ?.setAttribute("aria-pressed", "false");
+    setTriggerState(audio, false);
   };
 
   document.querySelectorAll(".play-musica").forEach((trigger) => {
     const audioId = trigger.dataset.audio;
     const audio = document.getElementById(audioId);
-    const title = trigger.closest(".post")?.querySelector("h2")
-      ?.textContent?.trim();
 
     if (!audio) return;
 
-    trigger.setAttribute("role", "button");
-    trigger.setAttribute("tabindex", "0");
-    trigger.setAttribute("aria-pressed", "false");
-    trigger.setAttribute(
-      "aria-label",
-      "Tocar música de " + (title || "esta memória")
-    );
+    setTriggerState(audio, false);
 
     const toggleAudio = async () => {
       if (currentAudio && currentAudio !== audio) {
@@ -385,10 +644,9 @@ const initializeAudio = () => {
         try {
           await audio.play();
           currentAudio = audio;
-          trigger.setAttribute("aria-pressed", "true");
-          trigger.closest(".post")?.classList.add("is-playing");
+          setTriggerState(audio, true);
         } catch {
-          trigger.setAttribute("aria-pressed", "false");
+          setTriggerState(audio, false);
         }
       } else {
         stopAudio(audio);
@@ -397,16 +655,18 @@ const initializeAudio = () => {
     };
 
     trigger.addEventListener("click", toggleAudio);
-    trigger.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      toggleAudio();
-    });
 
     audio.addEventListener("ended", () => {
-      trigger.setAttribute("aria-pressed", "false");
-      trigger.closest(".post")?.classList.remove("is-playing");
+      setTriggerState(audio, false);
       currentAudio = null;
+    });
+
+    audio.addEventListener("error", () => {
+      setTriggerState(audio, false);
+      trigger.disabled = true;
+      trigger.setAttribute("aria-label", "Áudio indisponível");
+      const label = trigger.querySelector(".audio-player-button__label");
+      if (label) label.textContent = "Áudio indisponível";
     });
   });
 };
@@ -466,6 +726,8 @@ const scrollToRequestedMemory = () => {
 };
 
 const posts = renderMemories();
+initializeMemorySearch();
+initializeFloatingPageNavigation();
 initializeRandomMemoryButton();
 initializeMedia(posts);
 initializeLazyVideos(posts);
