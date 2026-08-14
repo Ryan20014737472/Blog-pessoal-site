@@ -1125,3 +1125,16 @@ body.pagina-tres .hero__cta--secondary {
     margin: 12px;
   }
 }
+
+
+/* No celular, todos os cartões ficam empilhados, inclusive o grupo 4–6. */
+@media (max-width: 780px) {
+  .post:nth-of-type(6n + 4),
+  .post:nth-of-type(6n + 5),
+  .post:nth-of-type(6n + 6) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "media"
+      "text";
+  }
+}
