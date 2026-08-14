@@ -98,7 +98,26 @@ const createMemoryArticle = (memory, index) => {
   const paragraph = document.createElement("p");
   paragraph.textContent = memory.texto;
 
-  text.append(title, paragraph);
+  const shareButton = document.createElement("button");
+  shareButton.className = "memory-share-button";
+  shareButton.type = "button";
+  shareButton.dataset.memoryNumber = String(memoryNumber);
+  shareButton.setAttribute(
+    "aria-label",
+    "Copiar link da memória " + memoryNumber + ": " + memory.titulo
+  );
+
+  const shareIcon = document.createElement("span");
+  shareIcon.className = "memory-share-button__icon";
+  shareIcon.setAttribute("aria-hidden", "true");
+  shareIcon.textContent = "🔗";
+
+  const shareLabel = document.createElement("span");
+  shareLabel.className = "memory-share-button__label";
+  shareLabel.textContent = "Copiar link";
+
+  shareButton.append(shareIcon, shareLabel);
+  text.append(title, paragraph, shareButton);
   article.append(text);
 
   if (memory.audio) {
@@ -382,6 +401,68 @@ const initializeMemorySearch = () => {
   });
 
   return input;
+};
+
+
+const memoryPermalink = (memoryNumber) => {
+  const targetPage = memoryPage(memoryNumber - 1);
+  const url = new URL(pageUrl(targetPage), window.location.href);
+  url.search = "";
+  url.hash = "memoria-" + memoryNumber;
+  return url.href;
+};
+
+const copyText = async (value) => {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const temporary = document.createElement("textarea");
+  temporary.value = value;
+  temporary.setAttribute("readonly", "");
+  temporary.style.position = "fixed";
+  temporary.style.opacity = "0";
+  document.body.append(temporary);
+  temporary.select();
+
+  const copied = document.execCommand("copy");
+  temporary.remove();
+
+  if (!copied) {
+    throw new Error("Não foi possível copiar o link.");
+  }
+};
+
+const initializeMemorySharing = () => {
+  document.querySelectorAll(".memory-share-button").forEach((button) => {
+    const memoryNumber = Number.parseInt(button.dataset.memoryNumber, 10);
+    const label = button.querySelector(".memory-share-button__label");
+    let resetTimer = null;
+
+    if (!Number.isFinite(memoryNumber)) return;
+
+    button.addEventListener("click", async () => {
+      window.clearTimeout(resetTimer);
+      button.disabled = true;
+      button.classList.remove("has-error");
+
+      try {
+        await copyText(memoryPermalink(memoryNumber));
+        button.classList.add("is-copied");
+        if (label) label.textContent = "Link copiado!";
+      } catch {
+        button.classList.add("has-error");
+        if (label) label.textContent = "Não foi possível copiar";
+      }
+
+      resetTimer = window.setTimeout(() => {
+        button.disabled = false;
+        button.classList.remove("is-copied", "has-error");
+        if (label) label.textContent = "Copiar link";
+      }, 2200);
+    });
+  });
 };
 
 const initializeFloatingPageNavigation = () => {
@@ -728,6 +809,7 @@ const scrollToRequestedMemory = () => {
 const posts = renderMemories();
 initializeMemorySearch();
 initializeFloatingPageNavigation();
+initializeMemorySharing();
 initializeRandomMemoryButton();
 initializeMedia(posts);
 initializeLazyVideos(posts);
