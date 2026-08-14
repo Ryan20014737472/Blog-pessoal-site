@@ -1138,3 +1138,81 @@ body.pagina-tres .hero__cta--secondary {
       "text";
   }
 }
+
+
+/* Link permanente de cada memória. */
+.memory-share-button {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 42px;
+  margin-top: 1.35rem;
+  padding: 0.68rem 0.92rem;
+  color: var(--texto);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 850;
+  cursor: pointer;
+  background: rgba(8, 1, 13, 0.46);
+  border: 1px solid rgba(255, 250, 255, 0.22);
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(8, 1, 13, 0.24);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.memory-share-button:hover {
+  background: color-mix(in srgb, var(--roxo) 58%, rgba(8, 1, 13, 0.72));
+  border-color: rgba(255, 250, 255, 0.46);
+  transform: translateY(-2px);
+}
+
+.memory-share-button:disabled {
+  cursor: wait;
+}
+
+.memory-share-button.is-copied {
+  background: linear-gradient(135deg, var(--roxo), var(--vermelho));
+  border-color: rgba(255, 250, 255, 0.62);
+}
+
+.memory-share-button.has-error {
+  background: rgba(126, 20, 20, 0.82);
+  border-color: rgba(255, 214, 214, 0.62);
+}
+
+.memory-share-button__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.memory-share-button:focus-visible {
+  outline: 3px solid var(--texto);
+  outline-offset: 3px;
+}
+
+/* Mantém as ações da capa visíveis em desktops com pouca altura. */
+@media (min-width: 781px) and (max-height: 820px) {
+  body.pagina-um .hero {
+    min-height: 100vh;
+    padding-block: 34px;
+  }
+
+  body.pagina-um .hero__eyebrow {
+    margin-bottom: 8px;
+  }
+
+  body.pagina-um .titulo-img {
+    width: min(74vw, 620px);
+  }
+
+  body.pagina-um .hero__subtitle {
+    margin-top: 12px;
+  }
+
+  body.pagina-um .hero__actions {
+    margin-top: 18px;
+  }
+}
