@@ -872,24 +872,101 @@ const initializeRandomMemoryButton = () => {
   actions.append(randomButton);
 };
 
-const scrollToRequestedMemory = () => {
-  if (!window.location.hash.startsWith("#memoria-")) return;
+const nextAnimationFrame = () =>
+  new Promise((resolve) => requestAnimationFrame(resolve));
 
-  const target = document.querySelector(window.location.hash);
+const waitForTargetMedia = async (target) => {
+  const media = target.querySelector("img, video");
+  if (!media) return;
+
+  const isVideo = media.tagName === "VIDEO";
+
+  if (isVideo && media.dataset.videoLoaded === "false") {
+    media.querySelectorAll("source[data-src]").forEach((source) => {
+      source.src = source.dataset.src;
+      delete source.dataset.src;
+    });
+
+    media.dataset.videoLoaded = "true";
+    media.preload = "metadata";
+    media.load();
+  }
+
+  const isReady = () =>
+    isVideo ? media.readyState >= 1 : media.complete;
+
+  if (!isReady()) {
+    await new Promise((resolve) => {
+      const readyEvent = isVideo ? "loadedmetadata" : "load";
+      let timeoutId;
+
+      const finish = () => {
+        window.clearTimeout(timeoutId);
+        media.removeEventListener(readyEvent, finish);
+        media.removeEventListener("error", finish);
+        resolve();
+      };
+
+      media.addEventListener(readyEvent, finish, { once: true });
+      media.addEventListener("error", finish, { once: true });
+      timeoutId = window.setTimeout(finish, 2500);
+    });
+  }
+
+  if (!isVideo && media.complete && media.naturalWidth > 0 && media.decode) {
+    await Promise.race([
+      media.decode().catch(() => {}),
+      new Promise((resolve) => window.setTimeout(resolve, 500))
+    ]);
+  }
+};
+
+const targetScrollMargin = (target) =>
+  Number.parseFloat(window.getComputedStyle(target).scrollMarginTop) || 0;
+
+const alignRequestedMemory = (target, behavior) => {
+  const top = Math.max(
+    0,
+    window.scrollY +
+      target.getBoundingClientRect().top -
+      targetScrollMargin(target)
+  );
+
+  window.scrollTo({ top, behavior });
+};
+
+const scrollToRequestedMemory = async () => {
+  const hash = decodeURIComponent(window.location.hash);
+  if (!/^#memoria-\d+$/.test(hash)) return;
+
+  const target = document.getElementById(hash.slice(1));
   if (!target) return;
+
+  target.classList.add("is-scroll-target", "is-visible");
 
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      target.scrollIntoView({
-        behavior: reducedMotion ? "auto" : "smooth",
-        block: "center"
-      });
-    });
-  });
+  await nextAnimationFrame();
+
+  // Coloca a memória na tela para ativar o carregamento preguiçoso.
+  alignRequestedMemory(target, "auto");
+  await waitForTargetMedia(target);
+  await nextAnimationFrame();
+  await nextAnimationFrame();
+
+  // Recalcula a posição depois que a mídia definiu seu tamanho real.
+  alignRequestedMemory(target, reducedMotion ? "auto" : "smooth");
+
+  window.setTimeout(() => {
+    const difference =
+      target.getBoundingClientRect().top - targetScrollMargin(target);
+
+    if (Math.abs(difference) > 2) {
+      window.scrollBy({ top: difference, behavior: "auto" });
+    }
+  }, reducedMotion ? 80 : 700);
 };
 
 const posts = renderMemories();
@@ -904,3 +981,4 @@ initializeReadingUi();
 initializeReveal(posts);
 initializeAudio();
 scrollToRequestedMemory();
+window.addEventListener("hashchange", scrollToRequestedMemory);
