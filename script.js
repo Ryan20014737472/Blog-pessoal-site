@@ -935,7 +935,79 @@ const alignRequestedMemory = (target, behavior) => {
   window.scrollTo({ top, behavior });
 };
 
+let requestedMemoryScrollId = 0;
+let stopRequestedMemoryAlignment = () => {};
+
+const maintainRequestedMemoryAlignment = (
+  target,
+  reducedMotion,
+  scrollRequestId
+) => {
+  let isActive = true;
+  let observer;
+  let intervalId;
+  let startTimeoutId;
+  let finishTimeoutId;
+
+  const correctPosition = () => {
+    if (!isActive || scrollRequestId !== requestedMemoryScrollId) return;
+
+    const difference =
+      target.getBoundingClientRect().top - targetScrollMargin(target);
+
+    if (Math.abs(difference) > 2) {
+      window.scrollBy({ top: difference, behavior: "auto" });
+    }
+  };
+
+  const stopForUser = () => stopRequestedMemoryAlignment();
+
+  const cleanup = () => {
+    if (!isActive) return;
+    isActive = false;
+    observer?.disconnect();
+    window.clearInterval(intervalId);
+    window.clearTimeout(startTimeoutId);
+    window.clearTimeout(finishTimeoutId);
+    window.removeEventListener("wheel", stopForUser);
+    window.removeEventListener("touchstart", stopForUser);
+    window.removeEventListener("pointerdown", stopForUser);
+    window.removeEventListener("keydown", stopForUser);
+
+    if (stopRequestedMemoryAlignment === cleanup) {
+      stopRequestedMemoryAlignment = () => {};
+    }
+  };
+
+  stopRequestedMemoryAlignment = cleanup;
+
+  window.addEventListener("wheel", stopForUser, { passive: true });
+  window.addEventListener("touchstart", stopForUser, { passive: true });
+  window.addEventListener("pointerdown", stopForUser, { passive: true });
+  window.addEventListener("keydown", stopForUser);
+
+  startTimeoutId = window.setTimeout(() => {
+    if (!isActive) return;
+
+    correctPosition();
+
+    if ("ResizeObserver" in window) {
+      observer = new ResizeObserver(() => {
+        requestAnimationFrame(correctPosition);
+      });
+      observer.observe(document.getElementById("memorias") || document.body);
+    } else {
+      intervalId = window.setInterval(correctPosition, 150);
+    }
+
+    finishTimeoutId = window.setTimeout(cleanup, 12000);
+  }, reducedMotion ? 80 : 700);
+};
+
 const scrollToRequestedMemory = async () => {
+  const scrollRequestId = ++requestedMemoryScrollId;
+  stopRequestedMemoryAlignment();
+
   const hash = decodeURIComponent(window.location.hash);
   if (!/^#memoria-\d+$/.test(hash)) return;
 
@@ -953,20 +1025,16 @@ const scrollToRequestedMemory = async () => {
   // Coloca a memória na tela para ativar o carregamento preguiçoso.
   alignRequestedMemory(target, "auto");
   await waitForTargetMedia(target);
+  if (scrollRequestId !== requestedMemoryScrollId) return;
+
   await nextAnimationFrame();
   await nextAnimationFrame();
+  if (scrollRequestId !== requestedMemoryScrollId) return;
 
   // Recalcula a posição depois que a mídia definiu seu tamanho real.
   alignRequestedMemory(target, reducedMotion ? "auto" : "smooth");
 
-  window.setTimeout(() => {
-    const difference =
-      target.getBoundingClientRect().top - targetScrollMargin(target);
-
-    if (Math.abs(difference) > 2) {
-      window.scrollBy({ top: difference, behavior: "auto" });
-    }
-  }, reducedMotion ? 80 : 700);
+  maintainRequestedMemoryAlignment(target, reducedMotion, scrollRequestId);
 };
 
 const posts = renderMemories();
