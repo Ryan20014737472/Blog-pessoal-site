@@ -1223,7 +1223,7 @@ body.pagina-tres .hero__cta--secondary {
 @supports (content-visibility: auto) {
   .post {
     content-visibility: auto;
-    contain-intrinsic-size: auto 280px;
+    contain-intrinsic-size: auto 540px;
   }
 
   .post.is-scroll-target {
