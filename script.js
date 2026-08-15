@@ -971,7 +971,6 @@ const maintainRequestedMemoryAlignment = (
     window.clearTimeout(finishTimeoutId);
     window.removeEventListener("wheel", stopForUser);
     window.removeEventListener("touchstart", stopForUser);
-    window.removeEventListener("pointerdown", stopForUser);
     window.removeEventListener("keydown", stopForUser);
 
     if (stopRequestedMemoryAlignment === cleanup) {
@@ -983,7 +982,6 @@ const maintainRequestedMemoryAlignment = (
 
   window.addEventListener("wheel", stopForUser, { passive: true });
   window.addEventListener("touchstart", stopForUser, { passive: true });
-  window.addEventListener("pointerdown", stopForUser, { passive: true });
   window.addEventListener("keydown", stopForUser);
 
   startTimeoutId = window.setTimeout(() => {
@@ -996,9 +994,11 @@ const maintainRequestedMemoryAlignment = (
         requestAnimationFrame(correctPosition);
       });
       observer.observe(document.getElementById("memorias") || document.body);
-    } else {
-      intervalId = window.setInterval(correctPosition, 150);
     }
+
+    // Também confere a posição quando o navegador não informa uma mudança
+    // de altura causada por conteúdo com content-visibility.
+    intervalId = window.setInterval(correctPosition, 150);
 
     finishTimeoutId = window.setTimeout(cleanup, 12000);
   }, reducedMotion ? 80 : 700);
