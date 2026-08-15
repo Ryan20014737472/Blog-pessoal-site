@@ -1222,12 +1222,12 @@ body.pagina-tres .hero__cta--secondary {
 @supports (content-visibility: auto) {
   .post {
     content-visibility: auto;
-    contain-intrinsic-size: auto 560px;
+    contain-intrinsic-size: auto 360px;
   }
 
   @media (max-width: 780px) {
     .post {
-      contain-intrinsic-size: auto 720px;
+      contain-intrinsic-size: auto 520px;
     }
   }
 }
