@@ -19,6 +19,7 @@ const createPaginationLink = (label, page, relation) => {
   link.className = "pagination__link";
   link.href = pageUrl(page) + "#memorias";
   link.rel = relation;
+  link.dataset.page = String(page);
   link.textContent = label;
   return link;
 };
@@ -520,6 +521,7 @@ const initializeFloatingPageNavigation = () => {
     const link = document.createElement("a");
     link.className = "page-dock__link";
     link.href = pageUrl(page) + "#memorias";
+    link.dataset.page = String(page);
     link.textContent = String(page);
     link.setAttribute("aria-label", "Abrir página " + page);
 
@@ -533,6 +535,87 @@ const initializeFloatingPageNavigation = () => {
 
   navigation.append(pageList);
   document.body.append(navigation);
+};
+
+
+const PAGE_THEME_ASSETS = {
+  1: "assets/images/gengar.gif?v=2",
+  2: "assets/images/charizard.gif?v=4",
+  3: "assets/images/miranha.gif?v=1"
+};
+
+const initializePagePrefetch = () => {
+  const connection =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection;
+  const slowConnection =
+    connection?.saveData ||
+    /(^|-)2g$/.test(connection?.effectiveType || "");
+
+  if (slowConnection) return;
+
+  const totalPages = Math.max(
+    MINIMUM_PAGES,
+    Math.ceil(memories.length / MEMORIES_PER_PAGE)
+  );
+  const firstRenderedMemory = Number.parseInt(
+    document.querySelector(".post")?.dataset.memoryNumber,
+    10
+  );
+  const currentPage = Number.isFinite(firstRenderedMemory)
+    ? memoryPage(firstRenderedMemory - 1)
+    : document.body.classList.contains("pagina-tres")
+      ? 3
+      : document.body.classList.contains("pagina-dois")
+        ? 2
+        : 1;
+  const prefetched = new Set();
+
+  const prefetchResource = (resource, type) => {
+    if (!resource) return;
+
+    const href = new URL(resource, window.location.href).href;
+    if (prefetched.has(href)) return;
+    prefetched.add(href);
+
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = href;
+    link.fetchPriority = "low";
+    if (type) link.as = type;
+    document.head.append(link);
+  };
+
+  const warmPage = (page) => {
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    prefetchResource(pageUrl(page));
+    prefetchResource(PAGE_THEME_ASSETS[page], "image");
+  };
+
+  document.querySelectorAll("[data-page]").forEach((link) => {
+    const page = Number.parseInt(link.dataset.page, 10);
+    if (!Number.isFinite(page)) return;
+
+    const warmLinkedPage = () => warmPage(page);
+    link.addEventListener("pointerenter", warmLinkedPage, { once: true });
+    link.addEventListener("focus", warmLinkedPage, { once: true });
+    link.addEventListener("touchstart", warmLinkedPage, {
+      once: true,
+      passive: true
+    });
+  });
+
+  const warmAdjacentPages = () => {
+    warmPage(currentPage - 1);
+    warmPage(currentPage + 1);
+  };
+
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(warmAdjacentPages, { timeout: 1800 });
+  } else {
+    window.setTimeout(warmAdjacentPages, 800);
+  }
 };
 
 const showMediaFallback = (media, message) => {
@@ -809,6 +892,7 @@ const scrollToRequestedMemory = () => {
 const posts = renderMemories();
 initializeMemorySearch();
 initializeFloatingPageNavigation();
+initializePagePrefetch();
 initializeMemorySharing();
 initializeRandomMemoryButton();
 initializeMedia(posts);
