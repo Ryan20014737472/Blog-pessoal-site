@@ -54,8 +54,11 @@ const createMedia = (memory, memoryNumber, audioId) => {
   const image = document.createElement("img");
   image.src = media.arquivo;
   image.alt = media.alt || memory.titulo || "Memória " + memoryNumber;
-  image.loading = "lazy";
+  const isRequestedMemory =
+    window.location.hash === "#memoria-" + memoryNumber;
+  image.loading = isRequestedMemory ? "eager" : "lazy";
   image.decoding = "async";
+  if (isRequestedMemory) image.fetchPriority = "high";
 
   return image;
 };
