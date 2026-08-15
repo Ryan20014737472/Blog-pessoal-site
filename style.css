@@ -219,6 +219,7 @@ main {
   border-radius: var(--raio);
   box-shadow: 0 24px 60px var(--sombra);
   backdrop-filter: blur(16px);
+  scroll-margin-top: clamp(18px, 4vh, 32px);
   transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
 }
 
@@ -1223,6 +1224,10 @@ body.pagina-tres .hero__cta--secondary {
   .post {
     content-visibility: auto;
     contain-intrinsic-size: auto 280px;
+  }
+
+  .post.is-scroll-target {
+    content-visibility: visible;
   }
 
   @media (max-width: 780px) {
