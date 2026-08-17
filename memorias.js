@@ -675,7 +675,7 @@ const MEMORIAS = [
       "arquivo": "assets/audio/madagascar.mp3",
       "mime": "audio/mpeg"
     }
-  }, 
+  }
 ];
 
 if (typeof window !== "undefined") {
