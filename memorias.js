@@ -662,8 +662,20 @@ const MEMORIAS = [
       "arquivo": "assets/audio/vitoria.mp3",
       "mime": "audio/mpeg"
     }
-  }
-  
+  },
+   {
+    "titulo": "Hackathon",
+    "texto": "Minha grandiosa participação no Hackathon. O começo foi um caos: tivemos que nos organizar em áreas, e eu e o Vinícius entramos de intrusos em um time qualquer. Por sorte, conseguimos nos sair bem. Resolvemos desafios, comemos pizza, tomamos café, eu me queimei com cola quente e fiquei 20 horas sem dormir. Nunca fiquei tão cansado na vida, mas, sem dúvidas, foi uma experiência que quero repetir.",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/haka.jpg",
+      "alt": "Hackathon"
+    },
+    "audio": {
+      "arquivo": "assets/audio/madagascar.mp3",
+      "mime": "audio/mpeg"
+    }
+  }, 
 ];
 
 if (typeof window !== "undefined") {
