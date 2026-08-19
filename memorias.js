@@ -675,6 +675,19 @@ const MEMORIAS = [
       "arquivo": "assets/audio/Madagascar.mp3",
       "mime": "audio/mpeg"
     }
+  },
+  {
+    "titulo": "Banjo no cep",
+    "texto": "O Filho da puta do rockqueiro trouxe um banjo",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/estranheza.jpg",
+      "alt": "banjo"
+    },
+    "audio": {
+      "arquivo": "assets/audio/bebados.mp3",
+      "mime": "audio/mpeg"
+    }
   }
 ];
 
