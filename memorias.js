@@ -678,7 +678,7 @@ const MEMORIAS = [
   },
   {
     "titulo": "Banjo no cep",
-    "texto": "O Filho da puta do rockqueiro trouxe um banjo",
+    "texto": "O Filho da puta do Roqueiro trouxe um banjo",
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/estranheza.jpg",
