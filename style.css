@@ -1016,34 +1016,38 @@ body.pagina-tres .hero__cta--secondary {
   padding-inline: 2px;
 }
 
-/* Botão de áudio visível sobre a mídia. */
+/* Controle de áudio junto do texto, sem cobrir a mídia. */
 .audio-player-button {
-  z-index: 3;
-  grid-area: media;
-  align-self: end;
-  justify-self: start;
   display: inline-flex;
-  gap: 9px;
+  gap: 10px;
   align-items: center;
-  max-width: calc(100% - 32px);
-  min-height: 44px;
-  margin: 16px;
-  padding: 0.68rem 0.92rem;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 0.65rem 0.9rem;
   color: var(--texto);
   font: inherit;
   font-size: 0.84rem;
   font-weight: 900;
   cursor: pointer;
-  background: rgba(8, 1, 13, 0.8);
-  border: 1px solid rgba(255, 250, 255, 0.32);
+  background:
+    linear-gradient(135deg, rgba(61, 18, 110, 0.3), rgba(99, 12, 12, 0.24)),
+    rgba(8, 1, 13, 0.64);
+  border: 1px solid rgba(255, 250, 255, 0.3);
   border-radius: 999px;
-  box-shadow: 0 10px 28px rgba(8, 1, 13, 0.5);
+  box-shadow: 0 10px 26px rgba(8, 1, 13, 0.34);
   backdrop-filter: blur(12px);
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .audio-player-button:hover {
-  background: color-mix(in srgb, var(--roxo) 62%, rgba(8, 1, 13, 0.86));
+  background:
+    linear-gradient(135deg, rgba(61, 18, 110, 0.68), rgba(99, 12, 12, 0.48)),
+    rgba(8, 1, 13, 0.78);
+  border-color: rgba(255, 250, 255, 0.48);
   transform: translateY(-2px);
 }
 
@@ -1055,13 +1059,60 @@ body.pagina-tres .hero__cta--secondary {
 .audio-player-button__icon {
   display: grid;
   flex: 0 0 auto;
-  width: 26px;
-  height: 26px;
-  padding-left: 2px;
-  font-size: 0.72rem;
+  width: 29px;
+  height: 29px;
+  color: var(--texto);
   background: linear-gradient(135deg, var(--roxo), var(--vermelho));
+  border: 1px solid rgba(255, 250, 255, 0.28);
   border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
   place-items: center;
+}
+
+.audio-player-button__play {
+  padding-left: 2px;
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.audio-player-button__visualizer {
+  display: none;
+  width: 16px;
+  height: 14px;
+  gap: 2px;
+  align-items: end;
+  justify-content: center;
+}
+
+.audio-player-button__bar {
+  width: 2.5px;
+  height: 100%;
+  background: currentColor;
+  border-radius: 999px;
+  box-shadow: 0 0 5px rgba(255, 250, 255, 0.42);
+  transform: scaleY(var(--audio-level, 0.24));
+  transform-origin: bottom;
+  transition: transform 70ms linear;
+}
+
+.audio-player-button__bar:nth-child(1) {
+  animation-delay: -0.28s;
+  animation-duration: 0.62s;
+}
+
+.audio-player-button__bar:nth-child(2) {
+  animation-delay: -0.46s;
+  animation-duration: 0.78s;
+}
+
+.audio-player-button__bar:nth-child(3) {
+  animation-delay: -0.14s;
+  animation-duration: 0.54s;
+}
+
+.audio-player-button__bar:nth-child(4) {
+  animation-delay: -0.36s;
+  animation-duration: 0.7s;
 }
 
 .audio-player-button__label {
@@ -1072,7 +1123,27 @@ body.pagina-tres .hero__cta--secondary {
 
 .post.is-playing .audio-player-button {
   background: linear-gradient(135deg, var(--roxo), var(--vermelho));
-  border-color: rgba(255, 250, 255, 0.7);
+  border-color: rgba(255, 250, 255, 0.72);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--roxo) 24%, transparent),
+    0 14px 30px color-mix(in srgb, var(--vermelho) 36%, transparent);
+}
+
+.post.is-playing .audio-player-button__play {
+  display: none;
+}
+
+.post.is-playing .audio-player-button__visualizer {
+  display: flex;
+}
+
+.post.is-playing
+  .audio-player-button:not(.has-live-visualizer)
+  .audio-player-button__bar {
+  animation-name: audio-equalizer-fallback;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 .post.is-playing > :is(img, video) {
@@ -1080,6 +1151,12 @@ body.pagina-tres .hero__cta--secondary {
   box-shadow:
     0 0 0 5px color-mix(in srgb, var(--roxo) 30%, transparent),
     0 22px 42px color-mix(in srgb, var(--vermelho) 44%, transparent);
+}
+
+@keyframes audio-equalizer-fallback {
+  0% { transform: scaleY(0.22); }
+  45% { transform: scaleY(0.92); }
+  100% { transform: scaleY(0.38); }
 }
 
 .memory-search__submit:focus-visible,
@@ -1123,7 +1200,7 @@ body.pagina-tres .hero__cta--secondary {
   }
 
   .audio-player-button {
-    margin: 12px;
+    max-width: 100%;
   }
 }
 
@@ -1141,13 +1218,22 @@ body.pagina-tres .hero__cta--secondary {
 }
 
 
+/* Ações do cartão ficam junto do texto e nunca sobre a mídia. */
+.memory-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 1.35rem;
+}
+
 /* Link permanente de cada memória. */
 .memory-share-button {
   display: inline-flex;
   gap: 8px;
   align-items: center;
   min-height: 42px;
-  margin-top: 1.35rem;
+  margin-top: 0;
   padding: 0.68rem 0.92rem;
   color: var(--texto);
   font: inherit;
