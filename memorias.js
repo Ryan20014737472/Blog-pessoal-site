@@ -673,6 +673,19 @@ const MEMORIAS = [
     }
   },
    {
+    "titulo": "comemoração vitoria da TBR",
+    "texto": "Nós fomos ao Habib’s depois de vencer o campeonato da TBR. Definitivamente, foi muito divertido! Todos estavam cansados e com fome também. (O meu amor ali no canto 😍)",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/habbis.jpg",
+      "alt": "esfira"
+    },
+    "audio": {
+      "arquivo": "assets/audio/victory.mp3",
+      "mime": "audio/mpeg"
+    }
+  },
+   {
     "titulo": "Hackathon",
     "texto": "Minha grandiosa participação no Hackathon. O começo foi um caos: tivemos que nos organizar em áreas, e eu e o Vinícius entramos de intrusos em um time qualquer. Por sorte, conseguimos nos sair bem. Resolvemos desafios, comemos pizza, tomamos café, eu me queimei com cola quente e fiquei 20 horas sem dormir. Nunca fiquei tão cansado na vida, mas, sem dúvidas, foi uma experiência que quero repetir.",
     "midia": {
