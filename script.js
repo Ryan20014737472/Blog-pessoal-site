@@ -73,8 +73,10 @@ const createMemoryArticle = (memory, index) => {
   const audioId = memory.audio ? "audio-memoria-" + memoryNumber : "";
   article.append(createMedia(memory, memoryNumber, audioId));
 
+  let audioButton = null;
+
   if (memory.audio) {
-    const audioButton = document.createElement("button");
+    audioButton = document.createElement("button");
     audioButton.className = "play-musica audio-player-button";
     audioButton.type = "button";
     audioButton.dataset.audio = audioId;
@@ -83,14 +85,27 @@ const createMemoryArticle = (memory, index) => {
     const audioIcon = document.createElement("span");
     audioIcon.className = "audio-player-button__icon";
     audioIcon.setAttribute("aria-hidden", "true");
-    audioIcon.textContent = "▶";
+
+    const playIcon = document.createElement("span");
+    playIcon.className = "audio-player-button__play";
+    playIcon.textContent = "▶";
+
+    const visualizer = document.createElement("span");
+    visualizer.className = "audio-player-button__visualizer";
+
+    for (let barIndex = 0; barIndex < 4; barIndex += 1) {
+      const bar = document.createElement("span");
+      bar.className = "audio-player-button__bar";
+      visualizer.append(bar);
+    }
+
+    audioIcon.append(playIcon, visualizer);
 
     const audioLabel = document.createElement("span");
     audioLabel.className = "audio-player-button__label";
     audioLabel.textContent = "Tocar áudio";
 
     audioButton.append(audioIcon, audioLabel);
-    article.append(audioButton);
   }
 
   const text = document.createElement("div");
@@ -121,7 +136,13 @@ const createMemoryArticle = (memory, index) => {
   shareLabel.textContent = "Copiar link";
 
   shareButton.append(shareIcon, shareLabel);
-  text.append(title, paragraph, shareButton);
+
+  const memoryActions = document.createElement("div");
+  memoryActions.className = "memory-card-actions";
+  if (audioButton) memoryActions.append(audioButton);
+  memoryActions.append(shareButton);
+
+  text.append(title, paragraph, memoryActions);
   article.append(text);
 
   if (memory.audio) {
@@ -766,6 +787,111 @@ const initializeReveal = (posts) => {
 
 const initializeAudio = () => {
   let currentAudio = null;
+  let audioContext = null;
+  const visualizers = new WeakMap();
+  const AudioContextConstructor =
+    window.AudioContext || window.webkitAudioContext;
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  const resetVisualizer = (audio) => {
+    const visualizer = visualizers.get(audio);
+    if (!visualizer) return;
+
+    if (visualizer.frameId) {
+      cancelAnimationFrame(visualizer.frameId);
+      visualizer.frameId = null;
+    }
+
+    visualizer.bars.forEach((bar) => {
+      bar.style.removeProperty("--audio-level");
+    });
+  };
+
+  const prepareVisualizer = (audio, trigger) => {
+    if (!AudioContextConstructor || prefersReducedMotion) return null;
+
+    try {
+      if (!audioContext) {
+        audioContext = new AudioContextConstructor();
+      }
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume().catch(() => {});
+      }
+
+      let visualizer = visualizers.get(audio);
+
+      if (!visualizer) {
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 64;
+        analyser.smoothingTimeConstant = 0.78;
+
+        const source = audioContext.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        visualizer = {
+          analyser,
+          bars: Array.from(
+            trigger.querySelectorAll(".audio-player-button__bar")
+          ),
+          data: new Uint8Array(analyser.frequencyBinCount),
+          frameId: null
+        };
+
+        visualizers.set(audio, visualizer);
+        trigger.classList.add("has-live-visualizer");
+      }
+
+      return visualizer;
+    } catch {
+      return null;
+    }
+  };
+
+  const startVisualizer = (audio, visualizer) => {
+    if (!visualizer || visualizer.frameId) return;
+
+    const draw = () => {
+      if (audio.paused || audio.ended) {
+        visualizer.frameId = null;
+        return;
+      }
+
+      visualizer.analyser.getByteFrequencyData(visualizer.data);
+      const usefulLength = Math.max(
+        visualizer.bars.length,
+        Math.floor(visualizer.data.length * 0.72)
+      );
+
+      visualizer.bars.forEach((bar, index) => {
+        const start = Math.floor(
+          (index * usefulLength) / visualizer.bars.length
+        );
+        const end = Math.max(
+          start + 1,
+          Math.floor(
+            ((index + 1) * usefulLength) / visualizer.bars.length
+          )
+        );
+        let total = 0;
+
+        for (let frequency = start; frequency < end; frequency += 1) {
+          total += visualizer.data[frequency] || 0;
+        }
+
+        const average = total / (end - start);
+        const level = Math.min(1, Math.max(0.2, 0.2 + average / 245));
+        bar.style.setProperty("--audio-level", level.toFixed(3));
+      });
+
+      visualizer.frameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+  };
 
   const setTriggerState = (audio, playing) => {
     const trigger = document.querySelector(
@@ -775,7 +901,6 @@ const initializeAudio = () => {
 
     const title = trigger.closest(".post")?.querySelector("h2")
       ?.textContent?.trim() || "esta memória";
-    const icon = trigger.querySelector(".audio-player-button__icon");
     const label = trigger.querySelector(".audio-player-button__label");
 
     trigger.setAttribute("aria-pressed", String(playing));
@@ -783,7 +908,6 @@ const initializeAudio = () => {
       "aria-label",
       (playing ? "Pausar áudio de " : "Tocar áudio de ") + title
     );
-    if (icon) icon.textContent = playing ? "Ⅱ" : "▶";
     if (label) label.textContent = playing ? "Pausar áudio" : "Tocar áudio";
     trigger.closest(".post")?.classList.toggle("is-playing", playing);
   };
@@ -791,6 +915,7 @@ const initializeAudio = () => {
   const stopAudio = (audio) => {
     audio.pause();
     audio.currentTime = 0;
+    resetVisualizer(audio);
     setTriggerState(audio, false);
   };
 
@@ -805,15 +930,20 @@ const initializeAudio = () => {
     const toggleAudio = async () => {
       if (currentAudio && currentAudio !== audio) {
         stopAudio(currentAudio);
+        currentAudio = null;
       }
 
       if (audio.paused) {
         try {
+          const visualizer = prepareVisualizer(audio, trigger);
           await audio.play();
           currentAudio = audio;
           setTriggerState(audio, true);
+          startVisualizer(audio, visualizer);
         } catch {
+          resetVisualizer(audio);
           setTriggerState(audio, false);
+          currentAudio = null;
         }
       } else {
         stopAudio(audio);
@@ -824,11 +954,13 @@ const initializeAudio = () => {
     trigger.addEventListener("click", toggleAudio);
 
     audio.addEventListener("ended", () => {
+      resetVisualizer(audio);
       setTriggerState(audio, false);
       currentAudio = null;
     });
 
     audio.addEventListener("error", () => {
+      resetVisualizer(audio);
       setTriggerState(audio, false);
       trigger.disabled = true;
       trigger.setAttribute("aria-label", "Áudio indisponível");
@@ -837,7 +969,6 @@ const initializeAudio = () => {
     });
   });
 };
-
 
 const initializeRandomMemoryButton = () => {
   const primaryAction = document.querySelector(".hero__cta");
