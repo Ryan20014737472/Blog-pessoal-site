@@ -211,45 +211,72 @@ main {
   min-height: 340px;
   padding: clamp(24px, 4vw, 46px);
   overflow: hidden;
-  counter-increment: memoria;
+  isolation: isolate;
   background:
-    linear-gradient(135deg, rgba(255, 250, 255, 0.12), rgba(255, 250, 255, 0.035)),
+    linear-gradient(135deg, rgba(255, 250, 255, 0.095), rgba(255, 250, 255, 0.025)),
     linear-gradient(145deg, rgba(61, 18, 110, 0.31), rgba(99, 12, 12, 0.16));
   border: 1px solid var(--borda);
   border-radius: var(--raio);
-  box-shadow: 0 24px 60px var(--sombra);
+  box-shadow:
+    0 22px 54px var(--sombra),
+    inset 0 1px 0 rgba(255, 250, 255, 0.1);
   backdrop-filter: blur(16px);
   scroll-margin-top: clamp(18px, 4vh, 32px);
-  transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+  transition:
+    transform 240ms ease,
+    border-color 240ms ease,
+    box-shadow 240ms ease;
 }
 
 .post::before {
   position: absolute;
-  top: 20px;
-  right: 24px;
-  z-index: 1;
-  content: "MEMÓRIA " counter(memoria, decimal-leading-zero);
-  color: rgba(255, 250, 255, 0.52);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  right: -95px;
+  bottom: -125px;
+  z-index: 0;
+  width: 260px;
+  aspect-ratio: 1;
+  content: "";
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--vermelho) 28%, transparent),
+    transparent 68%
+  );
+  border-radius: 50%;
+  opacity: 0.7;
 }
 
 .post::after {
   position: absolute;
   top: 0;
   left: 0;
-  width: 50%;
+  z-index: 2;
+  width: 62%;
   height: 2px;
   content: "";
+  pointer-events: none;
   background: linear-gradient(90deg, var(--roxo), var(--vermelho), transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--vermelho) 35%, transparent);
 }
 
-.post:hover,
+.post > * {
+  position: relative;
+  z-index: 1;
+}
+
+.post:hover {
+  border-color: rgba(255, 250, 255, 0.32);
+  box-shadow:
+    0 28px 66px rgba(8, 1, 13, 0.56),
+    inset 0 1px 0 rgba(255, 250, 255, 0.13);
+  transform: translateY(-4px);
+}
+
 .post:focus-within {
-  border-color: rgba(255, 250, 255, 0.3);
-  box-shadow: 0 30px 72px rgba(8, 1, 13, 0.6);
-  transform: translateY(-7px);
+  border-color: rgba(255, 250, 255, 0.32);
+  box-shadow:
+    0 25px 60px rgba(8, 1, 13, 0.54),
+    inset 0 1px 0 rgba(255, 250, 255, 0.13);
 }
 
 /* Três mídias à esquerda, seguidas de três à direita. */
@@ -276,12 +303,13 @@ main {
 .post:hover > :is(img, video) {
   filter: saturate(1.08) contrast(1.03);
   box-shadow: 0 24px 42px rgba(8, 1, 13, 0.5);
-  transform: scale(1.018);
+  transform: scale(1.012);
 }
 
 .texto {
   grid-area: text;
   min-width: 0;
+  max-width: 62ch;
 }
 
 .media-fallback {
@@ -304,23 +332,50 @@ main {
   place-items: center;
 }
 
+.memory-number-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin-bottom: 0.85rem;
+  padding: 0.36rem 0.62rem;
+  color: rgba(255, 250, 255, 0.88);
+  font-size: 0.67rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--roxo) 42%, transparent),
+      color-mix(in srgb, var(--vermelho) 34%, transparent)
+    ),
+    rgba(8, 1, 13, 0.44);
+  border: 1px solid rgba(255, 250, 255, 0.2);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 250, 255, 0.12),
+    0 8px 20px rgba(8, 1, 13, 0.2);
+}
+
 .texto h2 {
   margin: 0;
   color: var(--texto);
   font-family: "Minecraft", ui-monospace, monospace;
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 400;
-  line-height: 1.18;
+  line-height: 1.16;
+  letter-spacing: 0.01em;
   text-wrap: balance;
   text-shadow: 0 3px 14px rgba(8, 1, 13, 0.36);
 }
 
 .texto p {
-  max-width: 62ch;
-  margin: 1.25rem 0 0;
+  max-width: 58ch;
+  margin: 1.05rem 0 0;
   color: var(--texto-suave);
   font-size: clamp(1rem, 1.6vw, 1.12rem);
-  line-height: 1.8;
+  line-height: 1.78;
+  text-wrap: pretty;
 }
 
 .post audio { display: none; }
@@ -435,8 +490,10 @@ hr {
   }
 
   .post::before {
-    top: 17px;
-    right: 18px;
+    top: auto;
+    right: -78px;
+    bottom: -96px;
+    width: 200px;
   }
 
   .post > :is(img, video) {
@@ -447,7 +504,7 @@ hr {
 
   .texto { padding-top: 20px; }
 
-  .texto h2 { padding-right: 6.3rem; }
+  .texto h2 { padding-right: 0; }
 
   .texto p { line-height: 1.72; }
 }
