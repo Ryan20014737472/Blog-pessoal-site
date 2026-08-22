@@ -664,6 +664,15 @@ const MEMORIAS = [
     }
   },
    {
+    "titulo": "Uber para habibs",
+    "texto": "Eu, Leninha e Leleo indo pro Habibs de Uber pós vitória TBR.",
+    "midia": {
+      "tipo": "video",
+      "arquivo": "assets/videos/caminho.mp4",
+      "mime": "video/mp4"
+    }
+  },
+   {
     "titulo": "Hackathon",
     "texto": "Minha grandiosa participação no Hackathon. O começo foi um caos: tivemos que nos organizar em áreas, e eu e o Vinícius entramos de intrusos em um time qualquer. Por sorte, conseguimos nos sair bem. Resolvemos desafios, comemos pizza, tomamos café, eu me queimei com cola quente e fiquei 20 horas sem dormir. Nunca fiquei tão cansado na vida, mas, sem dúvidas, foi uma experiência que quero repetir.",
     "midia": {
