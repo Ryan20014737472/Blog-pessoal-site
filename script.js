@@ -111,6 +111,11 @@ const createMemoryArticle = (memory, index) => {
   const text = document.createElement("div");
   text.className = "texto";
 
+  const memoryNumberBadge = document.createElement("span");
+  memoryNumberBadge.className = "memory-number-badge";
+  memoryNumberBadge.textContent =
+    "Memória " + String(memoryNumber).padStart(2, "0");
+
   const title = document.createElement("h2");
   title.textContent = memory.titulo;
 
@@ -142,7 +147,7 @@ const createMemoryArticle = (memory, index) => {
   if (audioButton) memoryActions.append(audioButton);
   memoryActions.append(shareButton);
 
-  text.append(title, paragraph, memoryActions);
+  text.append(memoryNumberBadge, title, paragraph, memoryActions);
   article.append(text);
 
   if (memory.audio) {
