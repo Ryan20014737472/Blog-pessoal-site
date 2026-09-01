@@ -671,20 +671,7 @@ const MEMORIAS = [
       "mime": "audio/mpeg"
     }
   },
- {
-    "titulo": "{ROBOCEP} comemorando",
-    "texto": "essa foto mostra toda a equipe {ROBOCEP} comemorando após ficar em 1° lugar nas duas categorias da {TBR}",
-    "corrigirOrtografia": true,
-    "midia": {
-      "tipo": "imagem",
-      "arquivo": "assets/images/equipe inteira.jpg",
-      "alt": "equiper"
-    },
-    "audio": {
-      "arquivo": "assets/audio/winni.mp3",
-      "mime": "audio/mpeg"
-    }
-  }, 
+
   
   {
     "titulo": "Uber para habibs",
