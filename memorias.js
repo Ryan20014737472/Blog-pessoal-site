@@ -781,6 +781,20 @@ const MEMORIAS = [
     "arquivo": "assets/videos/sertanejo2.mp4",
     "alt": "mãozinha"
   }
+  },
+  {
+  "titulo": "Cinema na robótica",
+  "texto": "Foi um dia bem tranquilo na robótica. Eu, {Brubru}, {Leninha} e {Leleo} estávamos assistindo a {Chainsaw Man}.",
+  "corrigirOrtografia": true,
+  "midia": {
+    "tipo": "imagem",
+    "arquivo": "assets/images/cinemarob.jpg",
+    "alt": "Foto no cinema"
+  },
+  "audio": {
+    "arquivo": "assets/audio/cinemax.mp3",
+    "mime": "audio/mpeg"
+  }
   }
 ];
 
