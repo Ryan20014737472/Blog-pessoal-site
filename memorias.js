@@ -693,7 +693,21 @@ const MEMORIAS = [
       "mime": "audio/mpeg"
     }
   },
-   {
+  {
+    "titulo": "minha equipe H",
+    "texto": "Meu pequeno time no hackathon, tenho que admitir que não tava confiante, no começo eu não conhecia ninguém, e também não estava confiante sobre minhas habilidades, mas depois disso, foi diversão e resenha, cada segundo foi mais legal que o outro me diverti sem parar e quem sabe um dia nós pode repetir",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/hack2.jpg",
+      "alt": "hhhhh"
+    },
+    "audio": {
+      "arquivo": "assets/audio/hack.mp3",
+      "mime": "audio/mpeg"
+    }
+  },
+  {
     "titulo": "Hackathon",
     "texto": "Minha grandiosa participação no Hackathon. O começo foi um caos: tivemos que nos organizar em áreas, e eu e o Vinícius entramos de intrusos em um time qualquer. Por sorte, conseguimos nos sair bem. Resolvemos desafios, comemos pizza, tomamos café, eu me queimei com cola quente e fiquei 20 horas sem dormir. Nunca fiquei tão cansado na vida, mas, sem dúvidas, foi uma experiência que quero repetir.",
     "midia": {
