@@ -226,8 +226,9 @@ const generateValidationImage = ({
   const padding = 64;
   const cardX = padding;
   const cardWidth = width - padding * 2;
-  const reportLines = wrapText(report, 57).slice(0, 32);
-  const reportWasReduced = wrapText(report, 57).length > reportLines.length;
+  const allReportLines = wrapText(report, 57);
+  const reportLines = allReportLines.slice(0, 42);
+  const reportWasReduced = allReportLines.length > reportLines.length;
   if (reportWasReduced) reportLines.push("[RELATORIO REDUZIDO - VEJA O E-MAIL COMPLETO]");
 
   const metaLines = [
@@ -238,7 +239,7 @@ const generateValidationImage = ({
 
   const lineHeight = 34;
   const reportHeight = Math.max(5, reportLines.length) * lineHeight;
-  const height = Math.max(720, Math.min(1900, 420 + reportHeight));
+  const height = Math.max(760, Math.min(2200, 560 + reportHeight));
   const pixels = Buffer.alloc(width * height * 4);
   drawRect(pixels, width, height, 0, 0, width, height, COLORS.background);
   drawRect(pixels, width, height, cardX, 48, cardWidth, height - 96, COLORS.card);
@@ -289,7 +290,9 @@ const generateValidationImage = ({
 
   reportLines.forEach((line) => {
     if (y + 24 >= height - 90) return;
-    const isProblem = /^[-*]/.test(line.trim()) || line.includes("ERRO");
+    const isProblem = /^(?:\[ERRO|ARQUIVO:|LINHA:|PROBLEMA:|COMO RESOLVER:|[-*])/.test(
+      line.trim()
+    );
     if (isProblem) {
       drawRect(
         pixels,
@@ -337,10 +340,23 @@ if (require.main === module) {
   const report = reportFile && fs.existsSync(reportFile)
     ? fs.readFileSync(reportFile, "utf8")
     : [
-        "Foram encontrados 2 problema(s):",
+        "Foram encontrados 2 problema(s).",
         "",
-        "- Codigo invalido em memorias.js: Unexpected token '{'",
-        "- Memoria 63: arquivo nao encontrado: assets/audio/exemplo.mp3"
+        "[ERRO 1] Codigo JavaScript invalido",
+        "Arquivo: memorias.js",
+        "Linha: 653",
+        "Coluna: 3",
+        "Problema: Unexpected token '{'",
+        "Trecho:",
+        "  652 |   }",
+        "> 653 |   {",
+        "      |   ^",
+        "Como resolver: adicione uma virgula no final da linha 652.",
+        "",
+        "[ERRO 2] Arquivo de audio nao encontrado",
+        "Arquivo: memorias.js",
+        "Linha: 684",
+        "Como resolver: envie o audio ou corrija o caminho."
       ].join("\n");
 
   const image = generateValidationImage({
@@ -354,3 +370,4 @@ if (require.main === module) {
   fs.writeFileSync(outputFile, image);
   console.log("Imagem criada: " + outputFile);
 }
+

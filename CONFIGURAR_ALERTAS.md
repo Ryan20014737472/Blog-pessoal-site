@@ -31,18 +31,19 @@ Nunca cole a chave da API em `memorias.js`, no workflow, em issues ou em mensage
 Quando uma alteração é enviada para a branch `main`:
 
 1. o site inteiro é validado;
-2. a saída é salva em `resultado-validacao.txt`;
+2. os diagnósticos são salvos em `resultado-validacao.txt` e `resultado-validacao.json`;
 3. se houver erro, o assistente envia o relatório pelo Resend;
 4. a execução continua vermelha para indicar que o problema ainda precisa ser corrigido.
 
 O e-mail inclui:
 
-- a mensagem exata do validador;
+- o arquivo, a linha e a coluna exatas do problema;
 - o número da memória, quando disponível;
-- o caminho do arquivo ausente;
-- o commit responsável;
-- um link para a execução completa no GitHub Actions.
-- uma imagem PNG com aparência de captura de tela, exibida no corpo do e-mail e anexada.
+- o trecho do código com um marcador `^` no ponto do erro;
+- uma instrução prática em **Como resolver**;
+- um botão para abrir exatamente a linha afetada no GitHub;
+- o commit responsável e um link para a execução completa;
+- uma imagem PNG do diagnóstico, exibida no corpo do e-mail e anexada.
 
 Alertas não são enviados em pull requests externos, porque os Secrets não ficam disponíveis nesse contexto.
 
@@ -52,4 +53,5 @@ Alertas não são enviados em pull requests externos, porque os Secrets não fic
 2. Marque **Enviar um e-mail de teste sem alterar o site**.
 3. Clique em **Run workflow**.
 
-O e-mail terá o assunto **TESTE — Assistente do Blog Pessoal** e deixará claro que nenhum erro foi inserido. Se o site estiver válido, a execução continuará verde.
+O teste simula um arquivo de áudio ausente e mostra linha, coluna, trecho e solução sem modificar o site. O e-mail terá o assunto **TESTE — Assistente do Blog Pessoal**. Se o site estiver válido, a execução continuará verde.
+

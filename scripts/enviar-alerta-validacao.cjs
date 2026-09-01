@@ -35,10 +35,24 @@ const main = async () => {
   }
 
   const reportFile = process.argv[2] || "resultado-validacao.txt";
+  const jsonReportFile = process.argv[3] || "resultado-validacao.json";
   let report = "A validação falhou, mas o relatório não foi encontrado.";
+  let structuredReport = null;
 
   if (fs.existsSync(reportFile)) {
     report = removeAnsi(fs.readFileSync(reportFile, "utf8"));
+  }
+
+  if (fs.existsSync(jsonReportFile)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(jsonReportFile, "utf8"));
+      if (parsed && Array.isArray(parsed.issues)) structuredReport = parsed;
+    } catch (error) {
+      console.warn(
+        "O relatório JSON não pôde ser lido; o e-mail usará o texto: " +
+          error.message
+      );
+    }
   }
 
   const maxReportLength = 12000;
@@ -71,8 +85,8 @@ const main = async () => {
     "Repositório: " + repository,
     "Commit: " + shortSha,
     "Alterado por: " + actor,
-    commitUrl ? "Ver commit: " + commitUrl : "",
-    runUrl ? "Ver execução completa: " + runUrl : "",
+    commitUrl ? "Ver commit: " + commitUrl : null,
+    runUrl ? "Ver execução completa: " + runUrl : null,
     "",
     isTest ? "Diagnóstico simulado:" : "O que está errado:",
     normalizeText(report),
@@ -81,7 +95,7 @@ const main = async () => {
       ? "Este foi apenas um teste. Nenhum erro foi inserido no site."
       : "Corrija os problemas acima e envie um novo commit. " +
         "A validação será executada novamente automaticamente."
-  ].filter(Boolean);
+  ].filter((line) => line !== null);
 
   const validationImage = generateValidationImage({
     report,
@@ -93,6 +107,67 @@ const main = async () => {
   const heading = isTest
     ? "Teste do assistente de alertas"
     : "O assistente encontrou um erro";
+  const issueHtml = structuredReport?.issues?.length
+    ? structuredReport.issues.slice(0, 40).map((issue, index) => {
+        const severity = issue.severity === "warning" ? "Aviso" : "Erro";
+        const color = issue.severity === "warning" ? "#d97706" : "#dc2626";
+        const location = [
+          issue.file ? "Arquivo: " + issue.file : "",
+          issue.line ? "Linha: " + issue.line : "",
+          issue.column ? "Coluna: " + issue.column : "",
+          issue.memory ? "Memória: " + issue.memory : ""
+        ].filter(Boolean).join(" &nbsp;•&nbsp; ");
+        const encodedFile = String(issue.file || "")
+          .split("/")
+          .map(encodeURIComponent)
+          .join("/");
+        const lineUrl = sha && issue.file && issue.line
+          ? server + "/" + repository + "/blob/" + sha + "/" +
+            encodedFile + "#L" + issue.line
+          : "";
+        const snippet = issue.snippet
+          ? '<pre style="margin:14px 0 0;padding:14px;background:#0f172a;color:#e2e8f0;border-radius:10px;white-space:pre-wrap;word-break:break-word;font:13px/1.55 Consolas,\'Courier New\',monospace">' +
+            escapeHtml(issue.snippet) + "</pre>"
+          : "";
+        const openLine = lineUrl
+          ? '<p style="margin:14px 0 0"><a href="' +
+            escapeHtml(lineUrl) +
+            '" style="display:inline-block;padding:9px 13px;border-radius:8px;background:#e2e8f0;color:#0f172a;text-decoration:none;font-weight:bold">Abrir exatamente nesta linha</a></p>'
+          : "";
+
+        return [
+          '<div style="margin:0 0 18px;padding:18px;border:1px solid #e2e8f0;border-left:5px solid ' +
+            color + ';border-radius:12px;background:#ffffff">',
+          '<h2 style="margin:0 0 9px;font-size:18px;color:' + color + '">' +
+            escapeHtml(severity + " " + (index + 1) + " — " + (issue.title || "Problema encontrado")) +
+            "</h2>",
+          location
+            ? '<p style="margin:0 0 12px;color:#475569;font-size:13px">' +
+              location + "</p>"
+            : "",
+          '<p style="margin:0 0 10px;line-height:1.6"><strong>O que aconteceu:</strong><br>' +
+            escapeHtml(issue.message || "Problema não detalhado.") + "</p>",
+          snippet,
+          '<p style="margin:14px 0 0;line-height:1.6"><strong>Como resolver:</strong><br>' +
+            escapeHtml(issue.solution || "Abra a execução completa para conferir o diagnóstico.")
+              .replace(/\n/g, "<br>") + "</p>",
+          openLine,
+          "</div>"
+        ].join("");
+      }).join("")
+    : '<pre style="margin:0;padding:18px;background:#0f172a;color:#e2e8f0;border-radius:12px;white-space:pre-wrap;word-break:break-word;font:14px/1.55 Consolas,\'Courier New\',monospace">' +
+      escapeHtml(normalizeText(report)) + "</pre>";
+  const hiddenIssueNotice = structuredReport?.issues?.length > 40
+    ? '<p style="color:#475569">O relatório possui mais problemas. Abra a execução completa para ver todos.</p>'
+    : "";
+  const actionLinks = [
+    commitUrl
+      ? '<a href="' + escapeHtml(commitUrl) + '">Ver commit</a>'
+      : "",
+    runUrl
+      ? '<a href="' + escapeHtml(runUrl) + '">Ver execução completa</a>'
+      : ""
+  ].filter(Boolean).join(" &nbsp;|&nbsp; ");
   const html = [
     '<div style="margin:0;padding:24px;background:#f1f5f9;font-family:Arial,sans-serif;color:#0f172a">',
     '<div style="max-width:900px;margin:0 auto;background:#ffffff;border-radius:16px;padding:28px">',
@@ -108,11 +183,11 @@ const main = async () => {
       "</strong><br>Alterado por: <strong>" +
       escapeHtml(actor) +
       "</strong></p>",
-    '<p><a href="' +
-      escapeHtml(commitUrl) +
-      '">Ver commit</a> &nbsp;|&nbsp; <a href="' +
-      escapeHtml(runUrl) +
-      '">Ver execução completa</a></p>',
+    actionLinks ? "<p>" + actionLinks + "</p>" : "",
+    '<h2 style="margin:24px 0 12px;font-size:19px">Diagnóstico detalhado</h2>',
+    issueHtml,
+    hiddenIssueNotice,
+    '<h2 style="margin:24px 0 12px;font-size:19px">Imagem do diagnóstico</h2>',
     '<img src="cid:validacao-print" alt="Imagem com o diagnóstico da validação" ' +
       'style="display:block;width:100%;height:auto;margin:24px 0;border-radius:12px">',
     '<p style="margin:0;color:#475569">A imagem também está anexada como arquivo PNG.</p>',
@@ -203,3 +278,4 @@ main().catch((error) => {
   console.error("Falha ao enviar o alerta por e-mail: " + error.message);
   process.exit(1);
 });
+

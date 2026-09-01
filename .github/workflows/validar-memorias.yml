@@ -48,20 +48,62 @@ jobs:
         shell: bash
         run: |
           set +e
-          node scripts/validar-memorias.cjs > resultado-validacao.txt 2>&1
+          node scripts/validar-memorias.cjs --json resultado-validacao.json > resultado-validacao.txt 2>&1
           status=$?
           cat resultado-validacao.txt
           echo "status=$status" >> "$GITHUB_OUTPUT"
           exit 0
 
       - name: Preparar diagnóstico de teste
-        if: github.event_name == 'workflow_dispatch' && inputs.testar_alerta
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.testar_alerta &&
+          steps.validacao.outputs.status == '0'
         shell: bash
         run: |
-          printf '%s\n' \
-            'Teste concluído: o workflow capturou este diagnóstico simulado.' \
-            'Exemplo de erro real: Memória 63: arquivo não encontrado.' \
-            > resultado-validacao.txt
+          node <<'NODE'
+          const fs = require("node:fs");
+          const issue = {
+            severity: "error",
+            code: "TEST_FILE_NOT_FOUND",
+            title: "Arquivo de áudio não encontrado (teste)",
+            file: "memorias.js",
+            line: 684,
+            column: 19,
+            memory: 64,
+            message: "A memória 64 aponta para assets/audio/exemplo.mp3, mas o arquivo não existe.",
+            solution: "Envie exemplo.mp3 para assets/audio/ ou corrija o nome na propriedade arquivo.",
+            snippet: [
+              '  683 |     "audio": {',
+              '> 684 |       "arquivo": "assets/audio/exemplo.mp3",',
+              '      |                   ^',
+              '  685 |       "mime": "audio/mpeg"'
+            ].join("\n")
+          };
+          const text = [
+            "Foram encontrados 1 problema(s).",
+            "",
+            "[ERRO 1] " + issue.title,
+            "Arquivo: " + issue.file,
+            "Linha: " + issue.line,
+            "Coluna: " + issue.column,
+            "Memória: " + issue.memory,
+            "Problema: " + issue.message,
+            "Trecho:\n" + issue.snippet,
+            "Como resolver: " + issue.solution
+          ].join("\n");
+          fs.writeFileSync("resultado-validacao.txt", text + "\n");
+          fs.writeFileSync(
+            "resultado-validacao.json",
+            JSON.stringify({
+              version: 2,
+              ok: false,
+              summary: { errors: 1, warnings: 0, memories: 66, pages: 3 },
+              issues: [issue],
+              text
+            }, null, 2) + "\n"
+          );
+          NODE
 
       - name: Enviar diagnóstico por e-mail
         if: >-
@@ -73,9 +115,10 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
           ALERT_FROM: ${{ secrets.ALERT_FROM }}
-          ALERT_TEST: ${{ github.event_name == 'workflow_dispatch' && inputs.testar_alerta }}
-        run: node scripts/enviar-alerta-validacao.cjs resultado-validacao.txt
+          ALERT_TEST: ${{ github.event_name == 'workflow_dispatch' && inputs.testar_alerta && steps.validacao.outputs.status == '0' }}
+        run: node scripts/enviar-alerta-validacao.cjs resultado-validacao.txt resultado-validacao.json
 
       - name: Marcar a validação como falha
         if: steps.validacao.outputs.status != '0'
         run: exit 1
+
