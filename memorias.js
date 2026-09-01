@@ -773,9 +773,9 @@ const MEMORIAS = [
   }
     },
   {
-  "titulo": "mãozinha da {Acrux}",
-  "texto": "Dança da mãozinha com a {Acrux} (sou um ótimo cantor)",
-  "corrigirOrtografia": true,
+  "titulo": "Mãozinha da Acrux",
+  "texto": "Dança da mãozinha com a Acrux (sou um ótimo cantor)",
+  "corrigirOrtografia": false,
   "midia": {
     "tipo": "video",
     "arquivo": "assets/videos/sertanejo2.mp4",
