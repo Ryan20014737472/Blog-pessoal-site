@@ -19,6 +19,20 @@
       "mime": "audio/mpeg"
     }
   },
+  {
+    "titulo": "Título",
+    "texto": "Descrição",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "video",
+      "arquivo": "assets/images/foto.jpg",
+      "alt": "Descrição da foto"
+    },
+    "audio": {
+      "arquivo": "assets/audio/musica.mp3",
+      "mime": "video/mp4"
+    }
+  },
 
   Para vídeo, use "tipo": "video", a pasta assets/videos e "mime": "video/mp4".
   A propriedade "audio" é opcional.
@@ -746,6 +760,20 @@ const MEMORIAS = [
     "audio": {
       "arquivo": "assets/audio/bebados.mp3",
       "mime": "audio/mpeg"
+    }
+  },
+    {
+    "titulo": "Sertanejo da {Acrux}",
+    "texto": "nada como cantar sertanejo sofrência com a {Acrux}",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "video",
+      "arquivo": "assets/videos/sertanejo.mp4",
+      "alt": "voltaaaaa"
+    },
+    "audio": {
+      "arquivo": "assets/audio/musica.mp3",
+      "mime": "video/mp4"
     }
   }
 ];
