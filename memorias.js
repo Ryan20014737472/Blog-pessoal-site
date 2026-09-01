@@ -677,7 +677,7 @@ const MEMORIAS = [
     "corrigirOrtografia": true,
     "midia": {
       "tipo": "imagem",
-      "arquivo": "assets/images/equipe inteir.jpg",
+      "arquivo": "assets/images/equipe inteira.jpg",
       "alt": "equiper"
     },
     "audio": {
