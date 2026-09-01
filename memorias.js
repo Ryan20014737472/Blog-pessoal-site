@@ -771,7 +771,17 @@ const MEMORIAS = [
     "arquivo": "assets/videos/sertanejo.mp4",
     "alt": "voltaaaaa"
   }
-    }
+    },
+  {
+  "titulo": "mãozinha da {Acrux}",
+  "texto": "Dança da mãozinha com a {Acrux} (sou um ótimo cantor)",
+  "corrigirOrtografia": true,
+  "midia": {
+    "tipo": "video",
+    "arquivo": "assets/videos/sertanejo2.mp4",
+    "alt": "mãozinha"
+  }
+  }
 ];
 
 if (typeof window !== "undefined") {
