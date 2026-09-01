@@ -541,6 +541,33 @@ const memoryLocation = (source, ranges, number, section, property) => {
   };
 };
 
+const protectedTextIssue = (value) => {
+  let opening = -1;
+
+  for (let index = 0; index < value.length; index += 1) {
+    if (value[index] === "{") {
+      if (opening >= 0) return { type: "nested", offset: index };
+      opening = index;
+      continue;
+    }
+
+    if (value[index] === "}") {
+      if (opening < 0) return { type: "closing", offset: index };
+      if (opening === index - 1) return { type: "empty", offset: opening };
+      opening = -1;
+    }
+  }
+
+  return opening >= 0 ? { type: "opening", offset: opening } : null;
+};
+
+const protectedTextIssueMessage = (issue) => {
+  if (issue.type === "nested") return "Há uma chave { dentro de outro trecho protegido.";
+  if (issue.type === "closing") return "Há uma chave } sem uma abertura { correspondente.";
+  if (issue.type === "empty") return "Há um trecho protegido vazio: {}.";
+  return "Há uma chave { sem o fechamento } correspondente.";
+};
+
 const validateMemoryFile = (number, file, type, location) => {
   const rule = rules[type];
 
@@ -683,6 +710,52 @@ if (memoryCodeIsValid && memories !== null) {
           title: "Descrição da memória não informada",
           message: "A memória " + number + " está sem texto.",
           solution: "Adicione ou preencha a propriedade \"texto\" nesta memória."
+        });
+      }
+
+      const hasOrthographyFlag = Object.prototype.hasOwnProperty.call(
+        memory,
+        "corrigirOrtografia"
+      );
+      if (hasOrthographyFlag && typeof memory.corrigirOrtografia !== "boolean") {
+        addError({
+          ...memoryLocation(memorySource, memoryRanges, number, "", "corrigirOrtografia"),
+          memory: number,
+          code: "ORTHOGRAPHY_FLAG_INVALID",
+          title: "Marcador de correção ortográfica inválido",
+          message: "A propriedade corrigirOrtografia da memória " + number + " deve ser true ou false.",
+          solution: "Para corrigir somente uma memória nova, use exatamente \"corrigirOrtografia\": true. Depois da correção, o GitHub trocará para false."
+        });
+      }
+
+      if (memory.corrigirOrtografia === true) {
+        [
+          ["titulo", memory.titulo, "título"],
+          ["texto", memory.texto, "texto"]
+        ].forEach(([property, value, label]) => {
+          if (typeof value !== "string") return;
+
+          const issue = protectedTextIssue(value);
+          if (!issue) return;
+
+          const location = memoryLocation(
+            memorySource,
+            memoryRanges,
+            number,
+            "",
+            property
+          );
+          addError({
+            ...location,
+            offset: typeof location.offset === "number"
+              ? location.offset + issue.offset
+              : undefined,
+            memory: number,
+            code: "ORTHOGRAPHY_PROTECTED_TEXT_INVALID",
+            title: "Chaves de proteção inválidas",
+            message: "No " + label + " da memória " + number + ", " + protectedTextIssueMessage(issue),
+            solution: "Use pares simples como {TBR} ou {nome artístico}. Não use chaves vazias, aninhadas ou soltas."
+          });
         });
       }
 
