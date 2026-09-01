@@ -784,8 +784,8 @@ const MEMORIAS = [
   },
   {
   "titulo": "Cinema na robótica",
-  "texto": "Foi um dia bem tranquilo na robótica. Eu, {Brubru}, {Leninha} e {Leleo} estávamos assistindo a {Chainsaw Man}.",
-  "corrigirOrtografia": true,
+  "texto": "Foi um dia bem tranquilo na robótica. Eu, Brubru, Leninha e Leleo estávamos assistindo a Chainsaw Man.",
+  "corrigirOrtografia": false,
   "midia": {
     "tipo": "imagem",
     "arquivo": "assets/images/cinemarob.jpg",
