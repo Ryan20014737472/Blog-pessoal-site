@@ -672,9 +672,9 @@ const MEMORIAS = [
     }
   },
  {
-    "titulo": "{ROBOCEP} comemorando",
-    "texto": "essa foto mostra toda a equipe {ROBOCEP} comemorando após ficar em 1° lugar nas duas categorias da {TBR}",
-    "corrigirOrtografia": true,
+    "titulo": "ROBOCEP comemorando",
+    "texto": "essa foto mostra toda a equipe ROBOCEP comemorando após ficar em 1° lugar nas duas categorias da TBR",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/equipe inteira.jpg",
