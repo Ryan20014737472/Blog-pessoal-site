@@ -694,9 +694,9 @@ const MEMORIAS = [
     }
   },
   {
-    "titulo": "minha equipe H",
-    "texto": "Meu pequeno time no hackathon, tenho que admitir que não tava confiante, no começo eu não conhecia ninguém, e também não estava confiante sobre minhas habilidades, mas depois disso, foi diversão e resenha, cada segundo foi mais legal que o outro me diverti sem parar e quem sabe um dia nós pode repetir",
-    "corrigirOrtografia": true,
+    "titulo": "Minha equipe H",
+    "texto": "Meu pequeno time no Saskatoon, tenho que admitir que não tava confiante, no começo eu não conhecia ninguém, e também não estava confiante sobre minhas habilidades, mas depois disso, foi diversão e resenha, cada segundo foi mais legal que o outro me diverti sem parar e quem sabe um dia nós podemos repetir",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/hack2.jpg",
