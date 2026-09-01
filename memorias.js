@@ -763,19 +763,15 @@ const MEMORIAS = [
     }
   },
     {
-    "titulo": "Sertanejo da {Acrux}",
-    "texto": "nada como cantar sertanejo sofrência com a {Acrux}",
-    "corrigirOrtografia": true,
-    "midia": {
-      "tipo": "video",
-      "arquivo": "assets/videos/sertanejo.mp4",
-      "alt": "voltaaaaa"
-    },
-    "audio": {
-      "arquivo": "assets/audio/musica.mp3",
-      "mime": "video/mp4"
-    }
+  "titulo": "Sertanejo da {Acrux}",
+  "texto": "nada como cantar sertanejo sofrência com a {Acrux}",
+  "corrigirOrtografia": true,
+  "midia": {
+    "tipo": "video",
+    "arquivo": "assets/videos/sertanejo.mp4",
+    "alt": "voltaaaaa"
   }
+    }
 ];
 
 if (typeof window !== "undefined") {
