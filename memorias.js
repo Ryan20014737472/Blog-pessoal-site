@@ -763,9 +763,9 @@ const MEMORIAS = [
     }
   },
     {
-  "titulo": "Sertanejo da {Acrux}",
-  "texto": "nada como cantar sertanejo sofrência com a {Acrux}",
-  "corrigirOrtografia": true,
+  "titulo": "Sertanejo da Acrux",
+  "texto": "nada como cantar sertanejo sofrência com a Acrux",
+  "corrigirOrtografia": false,
   "midia": {
     "tipo": "video",
     "arquivo": "assets/videos/sertanejo.mp4",
