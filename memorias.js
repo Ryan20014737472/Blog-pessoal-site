@@ -8,6 +8,7 @@
   {
     "titulo": "Título",
     "texto": "Descrição",
+    "corrigirOrtografia": true,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/foto.jpg",
@@ -21,6 +22,13 @@
 
   Para vídeo, use "tipo": "video", a pasta assets/videos e "mime": "video/mp4".
   A propriedade "audio" é opcional.
+
+  CORREÇÃO DE PORTUGUÊS (somente para uma memória NOVA):
+  1. Deixe "corrigirOrtografia": true ao criar a memória.
+  2. Depois do commit, o GitHub corrige título e texto uma única vez e muda o valor para false.
+  3. Para proteger uma palavra ou expressão, escreva entre chaves: {TBR}, {Leninha} ou {nome artístico}.
+     O conteúdo entre chaves não será corrigido e as chaves não aparecerão no site.
+  4. Nunca adicione "corrigirOrtografia": true em uma memória antiga: a automação bloqueia isso por segurança.
 */
 
 const MEMORIAS = [
@@ -720,3 +728,4 @@ if (typeof window !== "undefined") {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = MEMORIAS;
 }
+
