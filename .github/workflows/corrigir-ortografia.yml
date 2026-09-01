@@ -1,0 +1,205 @@
+name: Corrigir ortografia das novas memórias
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "memorias.js"
+      - "scripts/corrigir-ortografia.cjs"
+      - ".github/workflows/corrigir-ortografia.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: corrigir-ortografia-main
+  cancel-in-progress: true
+
+jobs:
+  corrigir:
+    name: Corrigir apenas memórias novas
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Preparar o Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Preparar o corretor local
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Encontrar o commit anterior
+        id: base
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_sha="${{ github.event.before }}"
+
+          if [[ -z "$base_sha" || "$base_sha" =~ ^0+$ ]]; then
+            base_sha="$(git rev-parse HEAD^)"
+          fi
+
+          git cat-file -e "$base_sha:memorias.js"
+          git merge-base --is-ancestor "$base_sha" HEAD || {
+            echo "O commit-base não pertence ao histórico atual; correção cancelada por segurança." >&2
+            exit 1
+          }
+          echo "sha=$base_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Baixar o LanguageTool local
+        id: languagetool
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/languagetool.zip"
+          destination="$RUNNER_TEMP/languagetool"
+          expected_sha256="53600506b399bb5ffe1e4c8dec794fd378212f14aaf38ccef9b6f89314d11631"
+
+          curl --fail --location --proto '=https' --retry 3 --retry-all-errors \
+            "https://languagetool.org/download/LanguageTool-6.6.zip" \
+            --output "$archive"
+          echo "$expected_sha256  $archive" | sha256sum --check --status
+          unzip -q "$archive" -d "$destination"
+
+          tool_dir="$(find "$destination" -maxdepth 1 -type d -name 'LanguageTool-*' -print -quit)"
+          test -n "$tool_dir"
+          test -f "$tool_dir/languagetool-server.jar"
+          echo "dir=$tool_dir" >> "$GITHUB_OUTPUT"
+
+      - name: Iniciar o corretor local
+        shell: bash
+        run: |
+          set -euo pipefail
+          log_file="$RUNNER_TEMP/languagetool.log"
+          java -cp "${{ steps.languagetool.outputs.dir }}/languagetool-server.jar" \
+            org.languagetool.server.HTTPServer --port 8081 > "$log_file" 2>&1 &
+          echo "$!" > "$RUNNER_TEMP/languagetool.pid"
+
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error \
+              --data-urlencode "language=pt-BR" \
+              --data-urlencode "text=Teste de correção." \
+              "http://127.0.0.1:8081/v2/check" > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          cat "$log_file"
+          exit 1
+
+      - name: Corrigir somente as memórias novas marcadas
+        id: correcao
+        shell: bash
+        run: |
+          set +e
+          node scripts/corrigir-ortografia.cjs \
+            --base "${{ steps.base.outputs.sha }}" \
+            --url "http://127.0.0.1:8081/v2/check" > resultado-correcao.txt 2>&1
+          status=$?
+          cat resultado-correcao.txt
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Conferir o arquivo corrigido
+        id: validacao
+        if: steps.correcao.outputs.status == '0'
+        shell: bash
+        run: |
+          set +e
+          git diff --check
+          diff_status=$?
+          if [[ "$diff_status" != '0' ]]; then
+            echo "A correção gerou um problema de formatação no Git." > resultado-validacao.txt
+            echo "status=$diff_status" >> "$GITHUB_OUTPUT"
+            cat resultado-validacao.txt
+            exit 0
+          fi
+
+          node scripts/validar-memorias.cjs --json resultado-validacao.json > resultado-validacao.txt 2>&1
+          status=$?
+          cat resultado-validacao.txt
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Enviar diagnóstico da correção por e-mail
+        if: >-
+          steps.correcao.outputs.status != '0' ||
+          steps.validacao.outputs.status != '0'
+        continue-on-error: true
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+          ALERT_FROM: ${{ secrets.ALERT_FROM }}
+        shell: bash
+        run: |
+          if [[ "${{ steps.correcao.outputs.status }}" != '0' ]]; then
+            node scripts/enviar-alerta-validacao.cjs resultado-correcao.txt
+          else
+            node scripts/enviar-alerta-validacao.cjs resultado-validacao.txt resultado-validacao.json
+          fi
+
+      - name: Marcar a correção como falha
+        if: >-
+          steps.correcao.outputs.status != '0' ||
+          steps.validacao.outputs.status != '0'
+        run: exit 1
+
+      - name: Salvar a correção no repositório
+        if: >-
+          steps.correcao.outputs.status == '0' &&
+          steps.validacao.outputs.status == '0'
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- memorias.js; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nenhuma correção necessária."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add memorias.js
+          git commit -m "Corrige ortografia de nova memória"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Solicitar publicação do GitHub Pages
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if curl --fail --silent --show-error --request POST \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/pages/builds"; then
+            echo "A publicação do GitHub Pages foi solicitada." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::A correção foi salva, mas não foi possível solicitar a publicação do GitHub Pages."
+            echo "⚠️ A correção foi salva, mas a publicação do GitHub Pages não pôde ser solicitada automaticamente." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Encerrar o corretor local
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f "$RUNNER_TEMP/languagetool.pid" ]]; then
+            kill "$(cat "$RUNNER_TEMP/languagetool.pid")" || true
+          fi
+
