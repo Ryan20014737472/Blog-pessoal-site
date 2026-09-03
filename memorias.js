@@ -795,6 +795,20 @@ const MEMORIAS = [
     "arquivo": "assets/audio/cinemax.mp3",
     "mime": "audio/mpeg"
   }
+  },
+  {
+    "titulo": "{nono}",
+    "texto": "esse menino ta crescendo rapido antes ele era um {pitico} agora está enorme",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/nono.jpg",
+      "alt": "Nono"
+    },
+    "audio": {
+      "arquivo": "assets/audio/nono.aac",
+      "mime": "audio/aac"
+    }
   }
 ];
 
