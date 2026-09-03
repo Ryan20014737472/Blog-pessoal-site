@@ -42,7 +42,8 @@ const allowedIssueTypes = new Set([
 // Evita que um palpite raro do corretor troque uma palavra por outra de
 // significado diferente. Estes pares foram conferidos manualmente.
 const trustedSpellingReplacements = new Map([
-  ["defitivamente", "definitivamente"]
+  ["defitivamente", "definitivamente"],
+  ["super mercado", "supermercado"]
 ]);
 
 const fail = (message) => {
@@ -562,6 +563,15 @@ const reviewField = async (text, description) => {
   return { text: reviewed, corrections, protectedSegments };
 };
 
+// Uma descrição deve terminar com pontuação, inclusive quando o último termo
+// estiver protegido por {chaves}. Títulos não recebem ponto final.
+const ensureFinalPunctuation = (text) => {
+  const trailingWhitespace = text.match(/\s*$/u)?.[0] || "";
+  const end = text.length - trailingWhitespace.length;
+  if (!end || /[.!?…]$/u.test(text.slice(0, end))) return text;
+  return text.slice(0, end) + "." + trailingWhitespace;
+};
+
 const removeProtectionDelimiters = (text) => text.replace(/[{}]/g, "");
 
 const applySourceReplacements = (source, replacements) => {
@@ -922,9 +932,13 @@ const main = async () => {
         "O " + field.label + " da memória " + number +
         " (linha " + lineAt(source, field.property.start) + ")";
       const review = await reviewField(field.property.value, description);
-      const corrected = removeProtectionDelimiters(review.text);
+      const punctuated =
+        field.label === "texto"
+          ? ensureFinalPunctuation(review.text)
+          : review.text;
+      const corrected = removeProtectionDelimiters(punctuated);
 
-      corrections += review.corrections;
+      corrections += review.corrections + (punctuated !== review.text ? 1 : 0);
       protectedSegments += review.protectedSegments;
       if (corrected !== field.property.value) {
         replacements.push({
