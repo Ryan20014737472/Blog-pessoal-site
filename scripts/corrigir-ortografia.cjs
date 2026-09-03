@@ -27,6 +27,9 @@ const baseRef = argumentValue("--base");
 const endpoint = argumentValue("--url") || "http://127.0.0.1:8081/v2/check";
 const dryRun = hasArgument("--dry-run");
 const memoriesFile = path.join(root, "memorias.js");
+// "picky" habilita regras extras do LanguageTool para gramática e pontuação.
+const languageToolLevel = "picky";
+const maxReviewPasses = 3;
 const markerName = "corrigirOrtografia";
 const allowedIssueTypes = new Set([
   "misspelling",
@@ -388,7 +391,7 @@ const requestCheck = async (text) => {
   const payload = new URLSearchParams({
     text,
     language: "pt-BR",
-    level: "default"
+    level: languageToolLevel
   });
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -478,6 +481,28 @@ const applyChanges = (text, changes) => {
       result.slice(change.offset + change.length);
   });
   return result;
+};
+
+// Algumas sugestões de pontuação e concordância só aparecem depois de uma
+// primeira correção. Reavaliamos poucas vezes e sempre recalculamos as
+// proteções para que trechos entre {chaves} permaneçam intocados.
+const reviewField = async (text, description) => {
+  let reviewed = text;
+  let corrections = 0;
+  let protectedSegments = 0;
+
+  for (let pass = 0; pass < maxReviewPasses; pass += 1) {
+    const ranges = protectedRanges(reviewed, description);
+    protectedSegments = Math.max(protectedSegments, ranges.length);
+
+    const changes = await suggestedChanges(reviewed, ranges);
+    if (!changes.length) break;
+
+    reviewed = applyChanges(reviewed, changes);
+    corrections += changes.length;
+  }
+
+  return { text: reviewed, corrections, protectedSegments };
 };
 
 const removeProtectionDelimiters = (text) => text.replace(/[{}]/g, "");
@@ -839,14 +864,11 @@ const main = async () => {
       const description =
         "O " + field.label + " da memória " + number +
         " (linha " + lineAt(source, field.property.start) + ")";
-      const ranges = protectedRanges(field.property.value, description);
-      const changes = await suggestedChanges(field.property.value, ranges);
-      const corrected = removeProtectionDelimiters(
-        applyChanges(field.property.value, changes)
-      );
+      const review = await reviewField(field.property.value, description);
+      const corrected = removeProtectionDelimiters(review.text);
 
-      corrections += changes.length;
-      protectedSegments += ranges.length;
+      corrections += review.corrections;
+      protectedSegments += review.protectedSegments;
       if (corrected !== field.property.value) {
         replacements.push({
           start: field.property.start,
