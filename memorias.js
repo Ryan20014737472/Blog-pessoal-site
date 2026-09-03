@@ -797,9 +797,9 @@ const MEMORIAS = [
   }
   },
   {
-    "titulo": "{nono}",
-    "texto": "esse menino ta crescendo rapido antes ele era um {pitico} agora está enorme",
-    "corrigirOrtografia": true,
+    "titulo": "nono",
+    "texto": "Esse menino ta crescendo rápido antes ele era um pitico agora está enorme",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/nono.jpg",
