@@ -809,6 +809,20 @@ const MEMORIAS = [
       "arquivo": "assets/audio/nono.aac",
       "mime": "audio/aac"
     }
+  },
+  {
+    "titulo": "até o mercado",
+    "texto": "defitivamente quanto mais tempo eu passo com esse {filho da puta} eu percebo que ele é meu melhor amigo",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/mercadin.jpeg",
+      "alt": "Até o mercado"
+    },
+    "audio": {
+      "arquivo": "assets/audio/bestfriends.mp3",
+      "mime": "audio/mpeg"
+    }
   }
 ];
 
