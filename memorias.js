@@ -812,7 +812,7 @@ const MEMORIAS = [
   },
   {
     "titulo": "Motorista do Noah",
-    "texto": "Sou um ótimo motorista de carrinho de super mercado",
+    "texto": "Sou um ótimo motorista de carrinho de supermercado.",
     "corrigirOrtografia": false,
     "midia": {
       "tipo": "video",
