@@ -836,9 +836,9 @@ const MEMORIAS = [
     }
   },
     {
-    "titulo": "noite longa",
-    "texto": "Literalmente dois primatas acordados as 4:11 da manhã jogando {minecraft}",
-    "corrigirOrtografia": true,
+    "titulo": "Noite longa",
+    "texto": "Literalmente dois primatas acordados as 4:11 da manhã jogando minecraft.",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "video",
       "arquivo": "assets/videos/danbrother (1) (1).mp4",
