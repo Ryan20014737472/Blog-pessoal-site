@@ -39,8 +39,62 @@ const allowedIssueTypes = new Set([
   "punctuation"
 ]);
 
+// Evita que um palpite raro do corretor troque uma palavra por outra de
+// significado diferente. Estes pares foram conferidos manualmente.
+const trustedSpellingReplacements = new Map([
+  ["defitivamente", "definitivamente"]
+]);
+
 const fail = (message) => {
   throw new Error(message);
+};
+
+const normalizeSpelling = (text) =>
+  text
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLocaleLowerCase("pt-BR");
+
+const preserveReplacementCase = (original, replacement) => {
+  if (!original) return replacement;
+
+  const upper = original.toLocaleUpperCase("pt-BR");
+  const lower = original.toLocaleLowerCase("pt-BR");
+  if (original !== lower && original === upper) {
+    return replacement.toLocaleUpperCase("pt-BR");
+  }
+
+  const first = original[0];
+  if (
+    first !== first.toLocaleLowerCase("pt-BR") &&
+    first === first.toLocaleUpperCase("pt-BR")
+  ) {
+    return replacement[0].toLocaleUpperCase("pt-BR") + replacement.slice(1);
+  }
+
+  return replacement;
+};
+
+const safeReplacement = (match, original, issueType) => {
+  const replacements = Array.isArray(match?.replacements)
+    ? match.replacements
+      .map((candidate) => candidate?.value)
+      .filter((candidate) => typeof candidate === "string" && candidate)
+    : [];
+
+  if (issueType !== "misspelling") return replacements[0] || "";
+
+  const trusted = trustedSpellingReplacements.get(
+    original.toLocaleLowerCase("pt-BR")
+  );
+  if (trusted) return preserveReplacementCase(original, trusted);
+
+  // Para ortografia, só aplicamos automaticamente trocas de acento ou caixa.
+  // Outras sugestões podem ser palavras válidas, porém inadequadas ao contexto.
+  const accentOnly = replacements.find(
+    (candidate) => normalizeSpelling(candidate) === normalizeSpelling(original)
+  );
+  return accentOnly ? preserveReplacementCase(original, accentOnly) : "";
 };
 
 const isIdentifierStart = (character) => /[A-Za-z_$]/.test(character || "");
@@ -446,13 +500,16 @@ const suggestedChanges = async (text, ranges) => {
     const offset = Number(match.offset);
     const length = Number(match.length);
     const issueType = String(match?.rule?.issueType || "").toLocaleLowerCase("en-US");
-    const replacement = match?.replacements?.[0]?.value;
 
     if (!Number.isInteger(offset) || !Number.isInteger(length)) return;
     if (offset < 0 || length < 0 || offset + length > text.length) return;
     if (!allowedIssueTypes.has(issueType)) return;
-    if (typeof replacement !== "string") return;
-    if (replacement === text.slice(offset, offset + length)) return;
+
+    const original = text.slice(offset, offset + length);
+    const replacement = safeReplacement(match, original, issueType);
+
+    if (typeof replacement !== "string" || !replacement) return;
+    if (replacement === original) return;
     if (intersectsProtectedRange(offset, length, ranges)) return;
 
     candidates.push({ offset, length, replacement });
