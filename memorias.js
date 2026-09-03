@@ -811,6 +811,17 @@ const MEMORIAS = [
     }
   },
   {
+    "titulo": "motorista do Noah",
+    "texto": "sou um otimo motorista de carrinho de super mercado",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "video",
+      "arquivo": "assets/videos/motorista.mp4",
+      "mime": "video/mp4",
+      "alt": "Motorista do Noah"
+    }
+  },
+  {
     "titulo": "Até o mercado",
     "texto": "Definitivamente, quanto mais tempo eu passo com esse filho da puta, mais percebo que ele é meu melhor amigo.",
     "corrigirOrtografia": false,
