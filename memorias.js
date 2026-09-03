@@ -811,9 +811,9 @@ const MEMORIAS = [
     }
   },
   {
-    "titulo": "motorista do Noah",
-    "texto": "sou um otimo motorista de carrinho de super mercado",
-    "corrigirOrtografia": true,
+    "titulo": "Motorista do Noah",
+    "texto": "Sou um ótimo motorista de carrinho de super mercado",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "video",
       "arquivo": "assets/videos/motorista.mp4",
