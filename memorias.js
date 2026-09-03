@@ -834,7 +834,18 @@ const MEMORIAS = [
       "arquivo": "assets/audio/bestfriends.mp3",
       "mime": "audio/mpeg"
     }
-  }
+  },
+    {
+    "titulo": "noite longa",
+    "texto": "Literalmente dois primatas acordados as 4:11 da manhã jogando {minecraft}",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "video",
+      "arquivo": "assets/videos/danbrother (1) (1).mp4",
+      "mime": "video/mp4",
+      "alt": "4:11"
+    }
+      }
 ];
 
 if (typeof window !== "undefined") {
