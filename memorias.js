@@ -811,9 +811,9 @@ const MEMORIAS = [
     }
   },
   {
-    "titulo": "até o mercado",
-    "texto": "defitivamente quanto mais tempo eu passo com esse {filho da puta} eu percebo que ele é meu melhor amigo",
-    "corrigirOrtografia": true,
+    "titulo": "Até o mercado",
+    "texto": "Delitivamente quanto mais tempo eu passo com esse filho da puta eu percebo que ele é meu melhor amigo",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/mercadin.jpeg",
