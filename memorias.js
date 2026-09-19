@@ -848,7 +848,7 @@ const MEMORIAS = [
       },
   {
     "titulo": "Indo pro baca",
-    "texto": "Aparentemente ate esse momento só íamos ao shopping muller mas isso era só o começo da jornada e do role com o Eugenio.",
+    "texto": "Aparentemente, até esse momento, só íamos ao shopping muller, mas isso era só o começo da jornada e do rolê com o Eugenio.",
     "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
