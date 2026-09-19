@@ -845,7 +845,21 @@ const MEMORIAS = [
       "mime": "video/mp4",
       "alt": "4:11"
     }
-      }
+      },
+  {
+    "titulo": "indo pro {baca}",
+    "texto": "aparentemente ate esse momento so iamos no shopping {muller} mas isso era so o começo da jornada e do role com o {Eugenio}",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/baka1.jpg",
+      "alt": "Indo pro Baca"
+    },
+    "audio": {
+      "arquivo": "assets/audio/baka1.mp3",
+      "mime": "audio/mpeg"
+    }
+  }
 ];
 
 if (typeof window !== "undefined") {
