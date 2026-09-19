@@ -847,9 +847,9 @@ const MEMORIAS = [
     }
       },
   {
-    "titulo": "indo pro {baca}",
-    "texto": "aparentemente ate esse momento so iamos no shopping {muller} mas isso era so o começo da jornada e do role com o {Eugenio}",
-    "corrigirOrtografia": true,
+    "titulo": "Indo pro baca",
+    "texto": "Aparentemente ate esse momento só íamos ao shopping muller mas isso era só o começo da jornada e do role com o Eugenio.",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/baka1.jpg",
