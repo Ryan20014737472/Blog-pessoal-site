@@ -889,9 +889,9 @@ const MEMORIAS = [
     }
   },
 {
-    "titulo": "visita a {steam punk monkeys}",
-    "texto": "usa visita que foi bem interessante, apesar que a gente não tinha nada de robô para apresentar para eles então foi bem balançado no começo mas depois ficou bem resenha",
-    "corrigirOrtografia": true,
+    "titulo": "Visita a steam punk monkeys",
+    "texto": "Usa visita que foi bem interessante, apesar que a gente não tinha nada de robô para apresentar para eles então foi bem balançado no começo mas depois ficou bem resenha.",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/steam.jpg",
