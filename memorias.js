@@ -873,6 +873,20 @@ const MEMORIAS = [
       "arquivo": "assets/audio/baka1.mp3",
       "mime": "audio/mpeg"
     }
+  },
+  {
+    "titulo": "mentoria {border eagles}",
+    "texto": "nunca ouve tanta resenha em uma mentoria quanto nessa que aconteceu",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/mentoria border eagles.jpg",
+      "alt": "mentos"
+    },
+    "audio": {
+      "arquivo": "assets/audio/good.mp3",
+      "mime": "audio/mpeg"
+    }
   }
 ];
 
