@@ -875,9 +875,9 @@ const MEMORIAS = [
     }
   },
   {
-    "titulo": "mentoria {border eagles}",
-    "texto": "nunca ouve tanta resenha em uma mentoria quanto nessa que aconteceu",
-    "corrigirOrtografia": true,
+    "titulo": "Mentoria border eagles",
+    "texto": "Nunca ouve tanta resenha em uma mentoria quanto nessa que aconteceu.",
+    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/mentoria border eagles.jpg",
