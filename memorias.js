@@ -887,6 +887,20 @@ const MEMORIAS = [
       "arquivo": "assets/audio/good.mp3",
       "mime": "audio/mpeg"
     }
+  },
+{
+    "titulo": "visita a {steam punk monkeys}",
+    "texto": "usa visita que foi bem interessante, apesar que a gente não tinha nada de robô para apresentar para eles então foi bem balançado no começo mas depois ficou bem resenha",
+    "corrigirOrtografia": true,
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/steam.jpg",
+      "alt": "monkey"
+    },
+    "audio": {
+      "arquivo": "assets/audio/steam.mp3",
+      "mime": "audio/mpeg"
+    }
   }
 ];
 
