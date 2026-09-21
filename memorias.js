@@ -847,6 +847,20 @@ const MEMORIAS = [
     }
       },
   {
+    "titulo": "Bigode de cabelo",
+    "texto": "Eu fico muito bem de bigode feito com cabelo.",
+    "corrigirOrtografia": false,
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/bigode.jpg",
+      "alt": "Bigode de cabelo"
+    },
+    "audio": {
+      "arquivo": "assets/audio/bigode.mp3",
+      "mime": "audio/mpeg"
+    }
+  },
+  {
     "titulo": "Indo pro baca",
     "texto": "Aparentemente, até esse momento, só íamos ao shopping muller, mas isso era só o começo da jornada e do rolê com o Eugenio.",
     "corrigirOrtografia": false,
