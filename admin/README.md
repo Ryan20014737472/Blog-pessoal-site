@@ -14,7 +14,7 @@ O formulário já está preparado em `/admin/`. O blog público continua no GitH
 
 1. No painel, abra **Blog pessoal > Memórias** e clique em **Editar**.
 2. Clique em **Adicionar memória**. Preencha título, descrição e escolha **Foto** ou **Vídeo**. Envie apenas o campo de mídia correspondente; o áudio é opcional.
-3. Use os controles de ordem da lista para posicionar a nova memória. A posição define o número; as páginas continuam com até 30 memórias.
+3. Para colocar a nova memória em um ponto específico, preencha **Inserir antes da memória nº**. Por exemplo, `76` coloca a nova antes da atual nº 76 e desloca as seguintes. Deixe vazio para adicioná-la no fim. Faça apenas uma mudança de posição por publicação. As páginas continuam com até 30 memórias.
 4. Deixe **Corrigir português desta memória nova** ligado somente para uma memória nova. Para proteger nomes ou expressões, use `{chaves}`. Não reative essa opção em memórias antigas.
 5. Clique em **Publicar**. Aguarde o commit e a validação no GitHub Actions antes de conferir o GitHub Pages.
 
