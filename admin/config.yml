@@ -1,0 +1,75 @@
+# O painel deve ser aberto na copia do site hospedada no Netlify.
+# Ative GitHub OAuth em Project configuration > Security > OAuth.
+backend:
+  name: github
+  repo: Ryan20014737472/Blog-pessoal-site
+  branch: main
+
+locale: pt
+media_folder: assets
+public_folder: /assets
+media_library:
+  config:
+    multiple: false
+
+collections:
+  - name: blog
+    label: Blog pessoal
+    files:
+      - name: memorias
+        label: Memórias
+        file: memorias.js
+        format: memorias-js
+        extension: js
+        fields:
+          - name: memorias
+            label: Memórias em ordem de exibição
+            widget: list
+            label_singular: memória
+            collapsed: true
+            minimize_collapsed: true
+            summary: '{{fields.titulo}}'
+            hint: A ordem desta lista define os números e as páginas. Use os controles da lista para mover uma memória.
+            fields:
+              - { name: titulo, label: Título, widget: string }
+              - { name: texto, label: Descrição, widget: text }
+              - name: tipo
+                label: Tipo de memória
+                widget: select
+                default: imagem
+                options:
+                  - { label: Foto, value: imagem }
+                  - { label: Vídeo, value: video }
+              - name: imagem
+                label: Foto
+                widget: image
+                required: false
+                media_folder: /assets/images
+                choose_url: false
+                hint: Preencha somente quando o tipo for Foto.
+              - name: video
+                label: Vídeo
+                widget: file
+                required: false
+                media_folder: /assets/videos
+                choose_url: false
+                hint: Preencha somente quando o tipo for Vídeo. Arquivos do GitHub devem ter menos de 100 MB.
+              - name: alt
+                label: Descrição da foto para acessibilidade
+                widget: string
+                required: false
+                hint: Descreva o que aparece na imagem.
+              - name: audio
+                label: Áudio opcional
+                widget: file
+                required: false
+                media_folder: /assets/audio
+                choose_url: false
+              - name: corrigirOrtografia
+                label: Corrigir português desta memória nova
+                widget: boolean
+                default: true
+                hint: Use {chaves} para proteger nomes e expressões. Mantenha desligado nas memórias antigas.
+              - { name: tinhaCorrecao, label: Controle interno, widget: hidden, required: false }
+              - { name: videoMime, label: Tipo do vídeo, widget: hidden, required: false }
+              - { name: audioMime, label: Tipo do áudio, widget: hidden, required: false }
