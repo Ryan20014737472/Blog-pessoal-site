@@ -29,7 +29,7 @@ collections:
             collapsed: true
             minimize_collapsed: true
             summary: '{{fields.titulo}}'
-            hint: A ordem desta lista define os números e as páginas. Use os controles da lista para mover uma memória.
+            hint: A ordem desta lista define os números e as páginas. Para inserir antes de outra, preencha o campo de posição na nova memória.
             fields:
               - { name: titulo, label: Título, widget: string }
               - { name: texto, label: Descrição, widget: text }
@@ -65,6 +65,14 @@ collections:
                 required: false
                 media_folder: /assets/audio
                 choose_url: false
+              - name: posicaoDesejada
+                label: Inserir antes da memória nº
+                widget: number
+                value_type: int
+                min: 1
+                step: 1
+                required: false
+                hint: Opcional. Exemplo: 76 coloca esta memória antes da atual nº 76. Deixe vazio para manter a ordem da lista.
               - name: corrigirOrtografia
                 label: Corrigir português desta memória nova
                 widget: boolean
