@@ -159,5 +159,5 @@
     }
   });
 
-  window.CMS.init();
+  window.initCMS();
 }());
