@@ -89,6 +89,28 @@
     }[extension] || "audio/mpeg";
   }
 
+  function orderedEntries(entries) {
+    const items = entries.slice();
+    const moves = items.filter(function (item) {
+      return item.posicaoDesejada !== undefined &&
+        item.posicaoDesejada !== null &&
+        item.posicaoDesejada !== "";
+    });
+    if (moves.length > 1) {
+      throw new Error("Mova uma memória por publicação para evitar conflito de ordem.");
+    }
+    if (moves.length === 1) {
+      const item = moves[0];
+      const position = Number(item.posicaoDesejada);
+      if (!Number.isInteger(position) || position < 1 || position > items.length) {
+        throw new Error("A posição deve estar entre 1 e " + items.length + ".");
+      }
+      items.splice(items.indexOf(item), 1);
+      items.splice(position - 1, 0, item);
+    }
+    return items;
+  }
+
   function toMemory(entry, index) {
     const number = index + 1;
     const title = String(entry.titulo || "").trim();
@@ -142,7 +164,7 @@
       if (!value || !Array.isArray(value.memorias) || !value.memorias.length) {
         throw new Error("Adicione pelo menos uma memória antes de publicar.");
       }
-      const memories = value.memorias.map(toMemory);
+      const memories = orderedEntries(value.memorias).map(toMemory);
       return [
         "// Memórias em ordem de exibição. Edite pelo painel /admin/.",
         "const MEMORIAS = " + JSON.stringify(memories, null, 2) + ";",
