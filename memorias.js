@@ -1,50 +1,4 @@
-/*
-  ARQUIVO CENTRAL DE MEMÓRIAS
-
-  Para adicionar uma memória, copie um objeto existente e cole no lugar desejado.
-  A posição do objeto nesta lista define automaticamente o número da memória.
-
-  Formato para imagem:
-  {
-    "titulo": "Título",
-    "texto": "Descrição",
-    "corrigirOrtografia": true,
-    "midia": {
-      "tipo": "imagem",
-      "arquivo": "assets/images/foto.jpg",
-      "alt": "Descrição da foto"
-    },
-    "audio": {
-      "arquivo": "assets/audio/musica.mp3",
-      "mime": "audio/mpeg"
-    }
-  },
-  {
-    "titulo": "Título",
-    "texto": "Descrição",
-    "corrigirOrtografia": true,
-    "midia": {
-      "tipo": "video",
-      "arquivo": "assets/images/foto.jpg",
-      "alt": "Descrição da foto"
-    },
-    "audio": {
-      "arquivo": "assets/audio/musica.mp3",
-      "mime": "video/mp4"
-    }
-  },
-
-  Para vídeo, use "tipo": "video", a pasta assets/videos e "mime": "video/mp4".
-  A propriedade "audio" é opcional.
-
-  CORREÇÃO DE PORTUGUÊS (somente para uma memória NOVA):
-  1. Deixe "corrigirOrtografia": true ao criar a memória.
-  2. Depois do commit, o GitHub corrige título e texto uma única vez e muda o valor para false.
-  3. Para proteger uma palavra ou expressão, escreva entre chaves: {TBR}, {Leninha} ou {nome artístico}.
-     O conteúdo entre chaves não será corrigido e as chaves não aparecerão no site.
-  4. Nunca adicione "corrigirOrtografia": true em uma memória antiga: a automação bloqueia isso por segurança.
-*/
-
+// Memórias em ordem de exibição. Edite pelo painel /admin/.
 const MEMORIAS = [
   {
     "titulo": "Pequeno Ryan",
@@ -670,8 +624,7 @@ const MEMORIAS = [
       "arquivo": "assets/audio/carlos.mp3",
       "mime": "audio/mpeg"
     }
-    },
-
+  },
   {
     "titulo": "TBR",
     "texto": "O momento que eu nunca pensei que chegaria: a TBR. Definitivamente, foi uma das melhores competições da minha vida. Nunca vi a Acrux tão unida quanto naquele dia. Cada detalhe, cada esforço e cada momento foram necessários para nos trazer até aquele momento: o primeiro lugar no Torneio Brasil de Robótica.",
@@ -685,21 +638,34 @@ const MEMORIAS = [
       "mime": "audio/mpeg"
     }
   },
- {
+  {
     "titulo": "ROBOCEP comemorando",
     "texto": "essa foto mostra toda a equipe ROBOCEP comemorando após ficar em 1° lugar nas duas categorias da TBR",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/equipe inteira.jpg",
       "alt": "equiper"
     },
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/winni.mp3",
       "mime": "audio/mpeg"
     }
-  }, 
-  
+  },
+  {
+    "titulo": "Troféus da {TBR}",
+    "texto": "Campeões da (TBR} nas duas categorias que aura da {porra}",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/78862.jpg",
+      "alt": "Troféus da {TBR}"
+    },
+    "corrigirOrtografia": true,
+    "audio": {
+      "arquivo": "assets/audio/champions.mp3",
+      "mime": "audio/mpeg"
+    }
+  },
   {
     "titulo": "Uber para habibs",
     "texto": "Eu, Leninha e Leleo indo pro Habibs de Uber pós vitória TBR.",
@@ -709,7 +675,7 @@ const MEMORIAS = [
       "mime": "video/mp4"
     }
   },
-   {
+  {
     "titulo": "comemoração vitoria da TBR",
     "texto": "Nós fomos ao Habib’s depois de vencer o campeonato da TBR. Definitivamente, foi muito divertido! Todos estavam cansados e com fome também. (O meu amor ali no canto 😍)",
     "midia": {
@@ -725,12 +691,12 @@ const MEMORIAS = [
   {
     "titulo": "Minha equipe H",
     "texto": "Meu pequeno time no Hackathon, tenho que admitir que não tava confiante, no começo eu não conhecia ninguém, e também não estava confiante sobre minhas habilidades, mas depois disso, foi diversão e resenha, cada segundo foi mais legal que o outro me diverti sem parar e quem sabe um dia nós podemos repetir",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/hack2.jpg",
       "alt": "hhhhh"
     },
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/hack.mp3",
       "mime": "audio/mpeg"
@@ -762,49 +728,49 @@ const MEMORIAS = [
       "mime": "audio/mpeg"
     }
   },
-    {
-  "titulo": "Sertanejo da Acrux",
-  "texto": "nada como cantar sertanejo sofrência com a Acrux",
-  "corrigirOrtografia": false,
-  "midia": {
-    "tipo": "video",
-    "arquivo": "assets/videos/sertanejo.mp4",
-    "alt": "voltaaaaa"
-  }
+  {
+    "titulo": "Sertanejo da Acrux",
+    "texto": "nada como cantar sertanejo sofrência com a Acrux",
+    "midia": {
+      "tipo": "video",
+      "arquivo": "assets/videos/sertanejo.mp4",
+      "alt": "voltaaaaa"
     },
-  {
-  "titulo": "Mãozinha da Acrux",
-  "texto": "Dança da mãozinha com a Acrux (sou um ótimo cantor)",
-  "corrigirOrtografia": false,
-  "midia": {
-    "tipo": "video",
-    "arquivo": "assets/videos/sertanejo2.mp4",
-    "alt": "mãozinha"
-  }
+    "corrigirOrtografia": false
   },
   {
-  "titulo": "Cinema na robótica",
-  "texto": "Foi um dia bem tranquilo na robótica. Eu, Brubru, Leninha e Leleo estávamos assistindo a Chainsaw Man.",
-  "corrigirOrtografia": false,
-  "midia": {
-    "tipo": "imagem",
-    "arquivo": "assets/images/cinemarob.jpg",
-    "alt": "Foto no cinema"
+    "titulo": "Mãozinha da Acrux",
+    "texto": "Dança da mãozinha com a Acrux (sou um ótimo cantor)",
+    "midia": {
+      "tipo": "video",
+      "arquivo": "assets/videos/sertanejo2.mp4",
+      "alt": "mãozinha"
+    },
+    "corrigirOrtografia": false
   },
-  "audio": {
-    "arquivo": "assets/audio/cinemax.mp3",
-    "mime": "audio/mpeg"
-  }
+  {
+    "titulo": "Cinema na robótica",
+    "texto": "Foi um dia bem tranquilo na robótica. Eu, Brubru, Leninha e Leleo estávamos assistindo a Chainsaw Man.",
+    "midia": {
+      "tipo": "imagem",
+      "arquivo": "assets/images/cinemarob.jpg",
+      "alt": "Foto no cinema"
+    },
+    "corrigirOrtografia": false,
+    "audio": {
+      "arquivo": "assets/audio/cinemax.mp3",
+      "mime": "audio/mpeg"
+    }
   },
   {
     "titulo": "nono",
     "texto": "Esse menino ta crescendo rápido antes ele era um pitico agora está enorme",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/nono.jpg",
       "alt": "Nono"
     },
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/nono.aac",
       "mime": "audio/aac"
@@ -813,48 +779,48 @@ const MEMORIAS = [
   {
     "titulo": "Motorista do Noah",
     "texto": "Sou um ótimo motorista de carrinho de supermercado.",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "video",
       "arquivo": "assets/videos/motorista.mp4",
       "mime": "video/mp4",
       "alt": "Motorista do Noah"
-    }
+    },
+    "corrigirOrtografia": false
   },
   {
     "titulo": "Até o mercado",
     "texto": "Definitivamente, quanto mais tempo eu passo com esse filho da puta, mais percebo que ele é meu melhor amigo.",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/mercadin.jpeg",
       "alt": "Até o mercado"
     },
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/bestfriends.mp3",
       "mime": "audio/mpeg"
     }
   },
-    {
+  {
     "titulo": "Noite longa",
     "texto": "Literalmente dois primatas acordados as 4:11 da manhã jogando minecraft.",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "video",
       "arquivo": "assets/videos/danbrother (1) (1).mp4",
       "mime": "video/mp4",
       "alt": "4:11"
-    }
-      },
+    },
+    "corrigirOrtografia": false
+  },
   {
     "titulo": "Bigode de cabelo",
     "texto": "Eu fico muito bem de bigode feito com cabelo.",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/bigode.jpg",
       "alt": "Bigode de cabelo"
     },
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/bigode.mp3",
       "mime": "audio/mpeg"
@@ -863,12 +829,12 @@ const MEMORIAS = [
   {
     "titulo": "Indo pro baca",
     "texto": "Aparentemente, até esse momento, só íamos ao shopping muller, mas isso era só o começo da jornada e do rolê com o Eugenio.",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/baka1.jpg",
       "alt": "Indo pro Baca"
     },
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/baka1.mp3",
       "mime": "audio/mpeg"
@@ -877,26 +843,26 @@ const MEMORIAS = [
   {
     "titulo": "Mentoria border eagles",
     "texto": "Nunca ouve tanta resenha em uma mentoria quanto nessa que aconteceu.",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/mentoria border eagles.jpg",
       "alt": "mentos"
     },
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/good.mp3",
       "mime": "audio/mpeg"
     }
   },
-{
+  {
     "titulo": "Visita a steam punk monkeys",
     "texto": "Usa visita que foi bem interessante, apesar que a gente não tinha nada de robô para apresentar para eles então foi bem balançado no começo mas depois ficou bem resenha.",
-    "corrigirOrtografia": false,
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/steam.jpg",
       "alt": "monkey"
     },
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/steam.mp3",
       "mime": "audio/mpeg"
@@ -911,4 +877,3 @@ if (typeof window !== "undefined") {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = MEMORIAS;
 }
-
