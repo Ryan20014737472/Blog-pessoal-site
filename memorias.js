@@ -653,14 +653,14 @@ const MEMORIAS = [
     }
   },
   {
-    "titulo": "Troféus da {TBR}",
-    "texto": "Campeões da {TBR} nas duas categorias que aura da {porra}",
+    "titulo": "Troféus da TBR",
+    "texto": "Campeões da TBR nas duas categorias que aura da porra.",
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/78862.jpg",
       "alt": "Troféus da {TBR}"
     },
-    "corrigirOrtografia": true,
+    "corrigirOrtografia": false,
     "audio": {
       "arquivo": "assets/audio/champions.mp3",
       "mime": "audio/mpeg"
