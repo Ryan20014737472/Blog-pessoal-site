@@ -72,7 +72,7 @@ collections:
                 min: 1
                 step: 1
                 required: false
-                hint: Opcional. Exemplo: 76 coloca esta memória antes da atual nº 76. Deixe vazio para manter a ordem da lista.
+                hint: "Opcional. Exemplo: 76 coloca esta memória antes da atual nº 76. Deixe vazio para manter a ordem da lista."
               - name: corrigirOrtografia
                 label: Corrigir português desta memória nova
                 widget: boolean
