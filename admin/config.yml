@@ -8,9 +8,6 @@ backend:
 locale: pt
 media_folder: assets
 public_folder: /assets
-media_library:
-  config:
-    multiple: false
 
 collections:
   - name: blog
