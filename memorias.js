@@ -654,7 +654,7 @@ const MEMORIAS = [
   },
   {
     "titulo": "Troféus da {TBR}",
-    "texto": "Campeões da (TBR} nas duas categorias que aura da {porra}",
+    "texto": "Campeões da {TBR} nas duas categorias que aura da {porra}",
     "midia": {
       "tipo": "imagem",
       "arquivo": "assets/images/78862.jpg",
