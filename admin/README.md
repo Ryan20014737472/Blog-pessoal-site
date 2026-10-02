@@ -19,3 +19,7 @@ O formulário já está preparado em `/admin/`. O blog público continua no GitH
 5. Clique em **Publicar**. Aguarde o commit e a validação no GitHub Actions antes de conferir o GitHub Pages.
 
 As fotos vão para `assets/images/`, os vídeos para `assets/videos/` e os áudios para `assets/audio/`. Arquivos individuais no GitHub precisam ficar abaixo de 100 MB; vídeos maiores exigem outra solução de armazenamento. As memórias existentes permanecem em `memorias.js` e não precisam ser migradas.
+
+## Desempenho do formulário
+
+`editor-leve.js` evita redesenhar os campos de memórias fechadas quando seus valores não mudaram. Os controles e a validação permanecem montados; ao abrir uma memória, o painel atualiza seus campos e callbacks normalmente. A otimização foi verificada com o Decap 3.8.3, fixado em `index.html`. Antes de atualizar essa versão, confira novamente a digitação, a reordenação, a validação e a publicação; se a estrutura interna mudar, o script mantém o comportamento padrão.
